@@ -1,2 +1,8 @@
 
 __pycache__/solver.cpython-37.pyc
+
+*.o
+*.out
+*.exe
+*.txt
+*.csv
