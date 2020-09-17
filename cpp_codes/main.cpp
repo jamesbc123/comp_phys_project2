@@ -12,7 +12,7 @@ int main(){
     clock_t start, end;
     double timeused;
 
-    string filename = "iterations.txt.";
+    string filename = "iterations.txt";
 
     int n = 100;
     double tol = 1e-8;
