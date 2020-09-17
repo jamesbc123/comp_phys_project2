@@ -6,7 +6,7 @@
 using namespace std;
 using namespace arma;
 
-ofsteam ofile;
+ofstream ofile;
 
 int main(){
     clock_t start, end;
