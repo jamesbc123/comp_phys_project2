@@ -34,7 +34,7 @@ int main(){
     // This could be done inside the class too. What do 
     // you think amund?
     ofile.open(filename);
-    m_ofile << timused << "time_used" << end1;
+    m_ofile << timeused << "time_used" << endl;
     m_ofile.close();
     return 0;
 }
