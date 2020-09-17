@@ -1,5 +1,5 @@
-#infdef SOLVER_HPP
-#define SOLVER_HPP
+#ifndef SOLVER_H
+#define SOLVER_H
 
 #include <iostream>
 #include <cmath>
@@ -29,9 +29,9 @@ public:
     void max_off_diag();
     void calc_tau();
     void rotate();
+    void run();
     void write_to_file(string filename);
     void print_out();
-protected:
 
 
 };

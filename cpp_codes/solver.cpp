@@ -2,7 +2,7 @@
 #include <cmath>
 #include <fstream>
 #include <armadillo>
-#include "solver.hpp"
+#include "solver.h"
 
 using namespace arma;
 using namespace std;

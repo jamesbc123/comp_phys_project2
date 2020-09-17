@@ -1,4 +1,4 @@
-#include "solver.hpp"
+#include "solver.h"
 #include <armadillo>
 #include <time.h>
 #include <fstream>
@@ -6,12 +6,14 @@
 using namespace std;
 using namespace arma;
 
-int main{
+ofstream ofile;
+
+int main(){
     clock_t start, end;
     double timeused;
 
     string filename = "./iterations.txt.";
-    ofsteam ofile;
+    
 
     int n = 100;
     double tol = 1e-8;
@@ -32,7 +34,7 @@ int main{
     // This could be done inside the class too. What do 
     // you think amund?
     ofile.open(filename);
-    m_ofile << timused << "time_used" << end1;
-    m_ofile.close();
+    ofile << timeused << "time_used" << endl;
+    ofile.close();
     return 0;
 }
