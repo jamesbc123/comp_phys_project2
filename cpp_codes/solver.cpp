@@ -2,7 +2,7 @@
 #include <cmath>
 #include <fstream>
 #include <armadillo>
-#include "solver.h"
+#include "solver.hpp"
 
 using namespace arma;
 using namespace std;
@@ -17,7 +17,6 @@ void Solver::init(int n, mat A, double tol){
 
     double m_tol = tol;
     int m_k;
-    int m_k;
     double m_tau;
     int m_max_iter = n*n*n;
     bool m_tol_reached = false;
@@ -31,7 +30,7 @@ void Solver::max_off_diag(){
     */
     double max = 0.0;
     for (int i = 0; i < m_n; ++i){
-        for (int j = i+1; j < n; ++j){
+        for (int j = i+1; j < m_n; ++j){
             double aij = fabs(m_A(i,j));
             if ( aij > max){
                 max = aij; m_k = i; m_p = j;
@@ -72,11 +71,11 @@ void Solver::rotate(){
     double a_kk, a_pp, a_ik, a_ip, r_ik, r_ip;
     a_kk = m_A(m_k,m_k);
     a_pp = m_A(m_p,m_p);
-    m_A(m_k,m_k) = c*c*a_kk - 2.0*c*s*m_A(k,l) + s*s*a_pp;
-    m_A(m_p,m_p) = s*s*a_kk + 2.0*c*s*m_A(k,l) + c*c*a_pp;
+    m_A(m_k,m_k) = c*c*a_kk - 2.0*c*s*m_A(m_k,m_p) + s*s*a_pp;
+    m_A(m_p,m_p) = s*s*a_kk + 2.0*c*s*m_A(m_k,m_p) + c*c*a_pp;
     m_A(m_k,m_p) = 0.0; // hard-coding non-diagonal elements by hand
     m_A(m_p,m_k) = 0.0; // same here
-    for(int i = 0; i < n; i++ ){
+    for(int i = 0; i < m_n; i++ ){
         if ( i != m_k && i != m_p ) {
             a_ik = m_A(i,m_k);
             a_ip = m_A(i,m_p);
@@ -96,7 +95,8 @@ void Solver::rotate(){
 void Solver::run(){
     
     for(m_i = 0; m_i < m_max_iter; m_i++){
-            Solver.max_off_diag();
+            //Solver.max_off_diag();
+            Solver::max_off_diag(); // or simply max_off_diag() without Solver:: ?
             if(m_tol_reached == true){
                 //print some stuff using a class function.
                  

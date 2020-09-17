@@ -1,4 +1,4 @@
-#include "solver.h"
+#include "solver.hpp"
 #include <armadillo>
 #include <time.h>
 #include <fstream>
@@ -24,7 +24,9 @@ int main(){
     Solver my_solver;
     my_solver.init(n, A, tol);
     start = clock();
+    
     my_solver.run();
+    
     end = clock();
     timeused = (end-start)/CLOCKS_PER_SEC; 
     my_solver.write_to_file(filename);
