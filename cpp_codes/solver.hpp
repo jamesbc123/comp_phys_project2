@@ -32,7 +32,6 @@ public:
     void run();
     void write_to_file(string filename);
     void print_out();
-protected:
 
 
 };
