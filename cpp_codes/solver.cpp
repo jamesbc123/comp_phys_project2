@@ -12,7 +12,9 @@ void Solver::init(int n, mat A, double tol){
     */
     int m_n = n;
     mat m_A = A;
-    mat m_R;
+    mat m_R = zeros<mat>(n, n);
+    m_R.diag().fill(1.0);
+    
     double m_tol = tol;
     int m_k;
     int m_k;
@@ -85,7 +87,7 @@ void Solver::rotate(){
         }
         // And finally the new eigenvectors
         r_ik = m_R(i,m_k);
-        r_il = m_R(i,m_p);
+        r_ip = m_R(i,m_p);
         m_R(i,m_k) = c*r_ik - s*r_ip;
         m_R(i,m_p) = c*r_ip + s*r_ik;
     }

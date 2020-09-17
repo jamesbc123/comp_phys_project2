@@ -19,8 +19,13 @@ class Solver:
             self.A = A
             
       def max_off_diag(self):
-            ''' Find the greatest off-diagonal element
-            wiil need to add a np.where self.p and self.k
+            ''' Find the greatest off-diagonal element.
+            
+            If the greatest off-diagonal element is less
+            or equal to tolerance, tol_reached is set to 
+            True. 
+            
+            Could do np.where self.p and self.k
             are not equal. THen we will have it. 
             
             '''
@@ -28,7 +33,7 @@ class Solver:
             for i in range(0, self.n):
                   for j in range(i+1, self.n):
                         if np.abs(self.A[i,j]) > max:
-                              max = np.abs(A[i,j])
+                              max = np.abs(self.A[i,j])
                               self.p = i
                               self.k = j
            
@@ -82,9 +87,9 @@ class Solver:
                         a_ik = self.A[i,k]
                         a_ip = self.A[i,p]
                         self.A[i,k] = c*a_ik - s*a_ip
-                        self.A[k,i] = A[i,k]
+                        self.A[k,i] = self.A[i,k]
                         self.A[i,p] = c*a_ip + s*a_ik
-                        self.A[p,i] = A[i,p]
+                        self.A[p,i] = self.A[i,p]
             
             r_ik = self.R[i,k]
             r_ip = self.R[i,p]
