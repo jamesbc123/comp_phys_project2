@@ -6,7 +6,7 @@
 using namespace std;
 using namespace arma;
 
-int main{
+int main(){
     clock_t start, end;
     double timeused;
 
