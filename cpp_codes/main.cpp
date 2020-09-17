@@ -6,12 +6,14 @@
 using namespace std;
 using namespace arma;
 
+ofsteam ofile;
+
 int main(){
     clock_t start, end;
     double timeused;
 
     string filename = "./iterations.txt.";
-    ofsteam ofile;
+    
 
     int n = 100;
     double tol = 1e-8;

@@ -29,6 +29,7 @@ public:
     void max_off_diag();
     void calc_tau();
     void rotate();
+    void run();
     void write_to_file(string filename);
     void print_out();
 protected:
