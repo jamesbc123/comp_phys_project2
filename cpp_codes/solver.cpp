@@ -12,13 +12,15 @@ void Solver::init(int n, mat A, double tol){
     */
     int m_n = n;
     mat m_A = A;
-    mat m_R;
+    mat m_R = zeros<mat>(n, n);
+    m_R.diag().fill(1.0);
+
     double m_tol = tol;
     int m_k;
     int m_k;
     double m_tau;
     int m_max_iter = n*n*n;
-    bool m_tol_reached = False;
+    bool m_tol_reached = false;
     ofstream m_ofile;
     int m_i;
 }
@@ -28,7 +30,7 @@ void Solver::max_off_diag(){
     indices of p and k to those found.
     */
     double max = 0.0;
-    for (int i = 0; i < n; ++i){
+    for (int i = 0; i < m_n; ++i){
         for (int j = i+1; j < n; ++j){
             double aij = fabs(m_A(i,j));
             if ( aij > max){
@@ -37,7 +39,7 @@ void Solver::max_off_diag(){
         }
     }
     if(max <= m_tol){
-        m_tol_reached = True;
+        m_tol_reached = true;
     }
 }
 
@@ -85,7 +87,7 @@ void Solver::rotate(){
         }
         // And finally the new eigenvectors
         r_ik = m_R(i,m_k);
-        r_il = m_R(i,m_p);
+        r_ip = m_R(i,m_p);
         m_R(i,m_k) = c*r_ik - s*r_ip;
         m_R(i,m_p) = c*r_ip + s*r_ik;
     }
@@ -95,7 +97,7 @@ void Solver::run(){
     
     for(m_i = 0; m_i < m_max_iter; m_i++){
             Solver.max_off_diag();
-            if(m_rol_reached == True){
+            if(m_tol_reached == true){
                 //print some stuff using a class function.
                  
                 Solver::print_out();
@@ -123,7 +125,7 @@ void Solver::write_to_file(string filename){
     /* Write the information to file
     */
     m_ofile.open(filename);
-    m_ofile << m_n << " " << m_i << "iterations" << end1;
+    m_ofile << m_n << "_" << m_i << "iterations" << endl;
     m_ofile.close();
 
 }
