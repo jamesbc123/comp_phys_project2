@@ -1,4 +1,4 @@
-#include "solver.hpp"
+#include "solver.h"
 #include <armadillo>
 #include <time.h>
 #include <fstream>
