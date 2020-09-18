@@ -52,9 +52,7 @@ int main()
 
     double eigVal1 = eigenValues[0];
     cout << "eigVal1: " << eigVal1 << endl;
-
     cout << "eigVal1*eigVec1: " << endl << eigVal1*eigVec1 << endl;
-
     cout << "A*eigVec1: " << endl << A*eigVec1 << endl;
     
     
@@ -77,8 +75,19 @@ int main()
     lambdaVec.raw_print(cout, "\nlambdaVec (eigenvalues from analytical expression): ");
     u.raw_print(cout, "\nu (eigenvectors from analytical expression): ");
 
-   //   ### (Hvorfor er det analytiske uttrykket annerledes enn Armadillo-uttrykket? Ovenfor er det allerede vist at egenvektorene
-   // og egenvektorene stemmer for Armadillo-løseren, så da må det være det analytiske uttrykket som er feil. Hvor er feilen?)
+    // Test one analytical eigenvector and its corresponding eigenvalue:
+    cout << "\nTest analytical eigenvalue and eigenvector: " << endl;
+    vec eigVec1_an = u.col(0);
+    cout << "eigVec1_an: " << endl << eigVec1_an << endl;
+
+    double eigVal1_an = lambdaVec[0];
+    cout << "eigVal1_an: " << eigVal1_an << endl;
+    cout << "eigVal1_an*eigVec1_an: " << endl << eigVal1_an*eigVec1_an << endl;
+    cout << "A*eigVec1_an: " << endl << A*eigVec1_an << endl;
+
+    
+    cout << "eigVec1 = " << endl << eigVec1 << endl;
+    cout << "2.239130435*eigVec1 = " << endl << 2.235890014*eigVec1 << endl;
 
     return 0;
 }
