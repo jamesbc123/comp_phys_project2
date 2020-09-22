@@ -1,33 +1,30 @@
+#include "solver.hpp"
 #include <iostream>
 #include <cmath>
 #include <fstream>
 #include <armadillo>
-#include "solver.hpp"
 
 using namespace arma;
 using namespace std;
 
 void Solver::init(int n, mat A, double tol){
-    /* Initialise the member variables needed in the class
-    */
-    int m_n = n;
-    mat m_A = A;
-    mat m_R = zeros<mat>(n, n);
+    /* Initialise the member variables in the class */
+    cout << "int n (inside Solver::init): " << n << endl;
+    m_n = n;
+    cout << "m_n (inside Solver::init): " << m_n << endl;
+
+    m_A = A;
+    m_R = zeros<mat>(n, n);
     m_R.diag().fill(1.0);
 
-    double m_tol = tol;
-    int m_k;
-    double m_tau;
-    int m_max_iter = n*n*n;
-    bool m_tol_reached = false;
-    ofstream m_ofile;
-    int m_i;
+    m_tol = tol;
+    m_max_iter = n*n*n;
+    m_tol_reached = false;
 }
 
 void Solver::max_off_diag(){
     /* Find the max element in A and change the 
-    indices of p and k to those found.
-    */
+    indices of p and k to those found. */
     double max = 0.0;
     for (int i = 0; i < m_n; ++i){
         for (int j = i+1; j < m_n; ++j){
@@ -43,15 +40,12 @@ void Solver::max_off_diag(){
 }
 
 void Solver::calc_tau(){
-    /* Calculate tau
-    */
+    /* Calculate tau */
     m_tau = (m_A(m_p,m_p) - m_A(m_k,m_k))/(2*m_A(m_k,m_p));
 }
 
 void Solver::rotate(){
-    /* Perform Jacobi method by making similarity transformations.
-
-    */
+    /* Perform Jacobi method by making similarity transformations. */
     double s, c;
     if(m_A(m_k, m_p) != 0.0){
         double t;
@@ -63,18 +57,19 @@ void Solver::rotate(){
         }
         c = 1/sqrt(1+t*t);
         s = c*t;
-    }else{
+    }
+    else{
         c = 1.0;
         s = 0.0;
-        }
+    }
 
     double a_kk, a_pp, a_ik, a_ip, r_ik, r_ip;
     a_kk = m_A(m_k,m_k);
     a_pp = m_A(m_p,m_p);
     m_A(m_k,m_k) = c*c*a_kk - 2.0*c*s*m_A(m_k,m_p) + s*s*a_pp;
     m_A(m_p,m_p) = s*s*a_kk + 2.0*c*s*m_A(m_k,m_p) + c*c*a_pp;
-    m_A(m_k,m_p) = 0.0; // hard-coding non-diagonal elements by hand
-    m_A(m_p,m_k) = 0.0; // same here
+    m_A(m_k,m_p) = 0.0; // Hard-coding non-diagonal elements by hand.
+    m_A(m_p,m_k) = 0.0;
     for(int i = 0; i < m_n; i++ ){
         if ( i != m_k && i != m_p ) {
             a_ik = m_A(i,m_k);
@@ -92,18 +87,15 @@ void Solver::rotate(){
     }
     return;
 }
+
 void Solver::run(){
-    
     for(m_i = 0; m_i < m_max_iter; m_i++){
-            //Solver.max_off_diag();
-            Solver::max_off_diag(); // or simply max_off_diag() without Solver:: ?
+            Solver::max_off_diag();
             if(m_tol_reached == true){
-                //print some stuff using a class function.
-                 
+                // Print some stuff using a class function.
                 Solver::print_out();
                 return;
             }
-
             Solver::calc_tau();
             Solver::rotate();
     }
@@ -112,20 +104,26 @@ void Solver::run(){
     // Hence print some stuff using a class function.
     // Or write to file.
     Solver::print_out();
-    return;
 }
 
 void Solver::print_out(){
-
-    // print to file the number of iterations or something. 
-    return;
+    // print to file the number of iterations or something.
+    if(m_i >= m_max_iter){
+        cout << "\nWarning: Maximum number of iterations of Solver::run() exceeded.\n\n";
+    }
+    else{
+        cout << "\nNumber of iterations (rotations) performed: " << m_i << endl << endl;
+    }
 }
 
 void Solver::write_to_file(string filename){
-    /* Write the information to file
-    */
-    m_ofile.open(filename);
-    m_ofile << m_n << "_" << m_i << "iterations" << endl;
-    m_ofile.close();
+    /* Write the information to file */
+    m_ofile.open(filename, ios_base::app);
+    // Columns in the text file: n, number_of_transformations
 
+    cout << "m_n (inside write_to_file): " << m_n << endl;
+    cout << "m_i (inside write_to_file): " << m_i << endl;
+
+    m_ofile << m_n << ", " << m_i << endl;  // Append the data to the file.
+    m_ofile.close();
 }

@@ -6,33 +6,27 @@
 #include <fstream>
 #include <armadillo>
 
-using namespace arma;
-using namespace std;
-
 class Solver{
-
 private:
-    int m_n;
-    mat m_A;
-    mat m_R;
-    double m_tol;
-    int m_max_iter;
-    int m_k;
-    int m_p;
-    double m_tau;
+    int m_n;        // Size of matrix A
+    arma::mat m_A;  // Matrix A, the system we want to solve for the eigenvalues.
+    arma::mat m_R;  // Rotation matrix
+    double m_tol;   // Tolerance of the sum of the off-diagonal elements
+    int m_max_iter; // Maximum accepted number of iterations
+    int m_k;        // First matrix index k
+    int m_p;        // Second matrix index p
+    double m_tau;   // tau = cot(2*theta)
     bool m_tol_reached;
-    int m_i;
-    ofstream m_ofile;
+    int m_i;    
+    std::ofstream m_ofile;
 
 public:
-    void init(int n, mat A, double tol);
+    void init(int n, arma::mat A, double tol);
     void max_off_diag();
     void calc_tau();
     void rotate();
     void run();
-    void write_to_file(string filename);
+    void write_to_file(std::string filename);
     void print_out();
-
-
 };
 #endif
