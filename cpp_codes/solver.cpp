@@ -7,6 +7,8 @@
 using namespace arma;
 using namespace std;
 
+
+
 void Solver::init(int n, mat A, double tol){
     /* Initialise the member variables in the class */
     cout << "int n (inside Solver::init): " << n << endl;
@@ -16,7 +18,7 @@ void Solver::init(int n, mat A, double tol){
     m_A = A;
     m_R = zeros<mat>(n, n);
     m_R.diag().fill(1.0);
-
+    
     m_tol = tol;
     m_max_iter = n*n*n;
     m_tol_reached = false;
@@ -116,14 +118,16 @@ void Solver::print_out(){
     }
 }
 
-void Solver::write_to_file(string filename){
+void Solver::write_to_file(string filename, string filename_R){
     /* Write the information to file */
-    m_ofile.open(filename, ios_base::app);
+    
     // Columns in the text file: n, number_of_transformations
+    ofstream m_ofile;
 
     cout << "m_n (inside write_to_file): " << m_n << endl;
     cout << "m_i (inside write_to_file): " << m_i << endl;
 
-    m_ofile << m_n << ", " << m_i << endl;  // Append the data to the file.
+    m_ofile.open(filename, ios::app);
+    m_ofile << "\n" << m_n << ", " << m_i << "\n";  // Append the data to the file.
     m_ofile.close();
 }
