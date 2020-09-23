@@ -36,7 +36,7 @@ int main(){
 
     int power = 3;
     double tol = 1e-8;
-    int repeatition = 5;
+    int repeatition = 1;
 
     for(int j=0; j<repeatition; j++){
         for(int i=1; i < power; i++){
@@ -60,7 +60,7 @@ int main(){
             ofile << "\n" << n << "," << timeused << endl;
             ofile.close();
 
-            string filename_R = "eig_vec_"+ to_string(n) + ".txt"
+            string filename_R = "eig_vec_"+ to_string(n) + ".txt";
             my_solver.write_to_file(filename, filename_R);  // Write 
         }
     }

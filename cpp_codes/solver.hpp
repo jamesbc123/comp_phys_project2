@@ -26,7 +26,8 @@ public:
     void calc_tau();
     void rotate();
     void run();
-    void write_to_file(std::string filename);
+    void write_to_file(std::string filename, std::string filename_R);
     void print_out();
+    void sort_eigvec_and_eigval();
 };
 #endif
