@@ -13,6 +13,7 @@ using namespace std;
 
 int main()
 {
+    int n;
     //double x0 = 0; double xN = 1; // End points in x
     /*
     int n = 10;  // Number of points = N+1
@@ -27,12 +28,20 @@ int main()
 
     // Test the numerical (Armadillo) vs analytical eigelvalues/eigenvectors:
     /*
-    int n = 10;
+    n = 10;
     test_Armadillo_vs_analytical(n);
     */
 
-    int n = 5;
+    // Test max_off_diag():
+    /*
+    n = 5;
     test_finding_largest_off_diagonal(n);
+    */
+
+    // Test orthogonal eigenvectors:
+    n = 5;
+    test_orthogonal_eigenvectors(n);
+
 
     return 0;
 }

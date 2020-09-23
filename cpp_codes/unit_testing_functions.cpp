@@ -114,3 +114,39 @@ void test_finding_largest_off_diagonal(int n){
     // Visually inspect the matrix A to check if max_off_diag() was correct.
     // Do this multiple times in order to check that the function works.
 }
+
+void test_orthogonal_eigenvectors(int n){
+    // This function checks if the eigenvectors output from Solver::run()
+    // are orthogonal, as they should be for a symmetric matrix.
+    //int n = 10;
+    mat A = zeros<mat>(n, n);
+    A.diag().fill(2);
+    A.diag(-1).fill(-1);
+    A.diag(1).fill(-1);
+    
+    Solver test_solver;
+    double tol = 1e-8;
+    test_solver.init(n, A, tol);
+    test_solver.run();
+    mat R = test_solver.get_R();  // Get the eigenvector solutions (along the rows of R).
+    mat vi, vj; // (Different) eigenvectors from Jacobi's algorithm.
+
+    cout << "\ntest_orthogonal_eigenvectors(): \n";
+    mat dotProducts(n,n);   // An nxn matrix containing a table of dot products.
+    for (int i=0; i<=n-1; i++){
+        //for (int j=i; j<=n-1; j++){
+        for (int j=0; j<=n-1; j++){
+            //vi = R.row(i).t();  // .t(): Transposed.
+            //vj = R.row(j).t();
+            vi = R.row(i);
+            vj = R.row(j);
+            double dotProd = dot(vi,vj);
+            dotProducts(i,j) = dotProd; // Add the dot product to the table.
+            cout << "\nv" << i << " dot v" << j << " = " << dotProd << endl;
+        }
+    }
+    cout << "dotProducts.print(): \n";
+    cout << setprecision(3);
+    dotProducts.raw_print(cout);
+
+}

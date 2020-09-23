@@ -12,5 +12,6 @@ void test_Armadillo_vs_analytical(int n);
 
 void test_finding_largest_off_diagonal(int n);
 
+void test_orthogonal_eigenvectors(int n);
 
 #endif
