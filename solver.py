@@ -100,7 +100,7 @@ class Solver:
             
       def run(self):
             start = time.time()
-            for i in tqdm(range(0, self.max_iter)):
+            for i in range(0, self.max_iter):
                   Solver.max_off_diag(self)
                   if self.tol_reached == True:
                         finish = time.time()
