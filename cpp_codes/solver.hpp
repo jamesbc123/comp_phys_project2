@@ -1,10 +1,6 @@
 #ifndef SOLVER_HPP
 #define SOLVER_HPP
 
-#include <iostream>
-#include <cmath>
-#include <fstream>
-#include <armadillo>
 
 class Solver{
 private:
