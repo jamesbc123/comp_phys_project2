@@ -60,7 +60,7 @@ int main(){
             ofile << "\n" << n << "," << timeused << endl;
             ofile.close();
 
-            string filename_R = ""
+            string filename_R = "eig_vec_"+ to_string(n) + ".txt"
             my_solver.write_to_file(filename, filename_R);  // Write 
         }
     }
