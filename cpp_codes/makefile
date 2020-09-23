@@ -1,7 +1,7 @@
 all: compile run
 
 compile:
-	g++ -o main.out main.cpp solver.cpp
+	g++ -o main.out main.cpp solver.cpp -larmadillo
 
 run:
 	./main.out
