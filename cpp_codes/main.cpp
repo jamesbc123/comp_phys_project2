@@ -34,7 +34,7 @@ int main(){
     clock_t start, end;
     double timeused;
 
-    int power = 2;
+    int power = 3;
     double tol = 1e-8;
     int repetition = 1;
 
