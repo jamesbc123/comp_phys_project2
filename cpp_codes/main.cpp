@@ -34,7 +34,7 @@ int main(){
     clock_t start, end;
     double timeused;
 
-    int power = 3;
+    int power = 2;
     double tol = 1e-8;
     int repetition = 1;
 
@@ -59,6 +59,7 @@ int main(){
             ofile << "\n" << n << "," << timeused << endl;
             ofile.close();
 
+            my_solver.sort_eigvec_and_eigval();
             string filename_R = "eig_vec_"+ to_string(n) + ".txt";
             my_solver.write_to_file(filename, filename_R);  // Write 
         }
