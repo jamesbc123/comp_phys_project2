@@ -37,7 +37,7 @@ int main(){
 
     double tol = 1e-8;
     int repetition = 1;
-    int max_n = 150
+    int max_n = 150;
 
     for(int j=0; j<repetition; j++){
         for(int n=50; n< max_n; n+=50){
@@ -68,7 +68,7 @@ int main(){
             // Write timings to file.
             cout <<scientific<< "time used by solver class" << timeused << endl;
             ofile.open(filename_timing, ios::app);
-            ofile << n << "," << timeused << "," << timeused_arma << "," << endl;
+            ofile << n << "," << timeused << "," << timeused_arma << endl;
             ofile.close();
 
             // Sort the eigenvectors and eigenvalues from solver class.

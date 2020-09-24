@@ -126,7 +126,7 @@ void Solver::write_to_file(string filename, string filename_R){
     cout << "m_i (inside write_to_file): " << m_i << endl;
 
     m_ofile.open(filename, ios::app);
-    m_ofile << m_n << "," << m_i << "," <<endl;  // Append the data to the file.
+    m_ofile << m_n << "," << m_i <<endl;  // Append the data to the file.
     m_ofile.close();
 
     m_ofile.open(filename_R);
