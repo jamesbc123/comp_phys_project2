@@ -129,7 +129,6 @@ void Solver::write_to_file(string filename, string filename_R){
     m_ofile << "\n" << m_n << ", " << m_i << "\n";  // Append the data to the file.
     m_ofile.close();
 
-    
     m_ofile.open(filename_R);
     m_ofile << m_R << endl;
     m_ofile.close();
@@ -141,19 +140,15 @@ void Solver::sort_eigvec_and_eigval(){
     // Sort the eigenvaules by value and the eigenvectors by this ordering.
 
     */
-    
-    vec ind = zeros<vec>(m_n);
-
-    for (int i=0; i<m_n-1; i++){
-        ind[i] = i;
-    }
-    
     vec eigval = m_A.diag();
-    //cout << "The eigenvalues are" << eigval << endl;
     uvec indices = sort_index(eigval, "ascend");
     sort (eigval.begin(), eigval.begin()+m_n);
-    //cout << "the sorted eigvals are" << eigval << endl;
-    //cout << "the indices are" << indices << endl;
-    //mat m_R = m_R(indices,:);
-    //cout << m_R << endl;
+    mat sorted_R = zeros<mat>(m_n,m_n);
+
+    for (int i=0; i<m_n; i++){
+        sorted_R.row(i) = m_R.row(indices(i));
+    }
+
+    // Change m_R to the new sorted R.
+    m_R = sorted_R
 }
