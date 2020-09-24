@@ -150,5 +150,5 @@ void Solver::sort_eigvec_and_eigval(){
     }
 
     // Change m_R to the new sorted R.
-    m_R = sorted_R
+    m_R = sorted_R;
 }
