@@ -9,8 +9,9 @@ using namespace std;
 using namespace arma;
 
 int main(){
+    //run_buckling_beam(); // Run the code for problem c)
 
-    run_problem_c();    // This function contains all the code for problem c).
+    run_q_dots_one_electron(); // Run the code for problem d)
 
     return 0;
 }

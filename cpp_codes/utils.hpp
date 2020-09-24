@@ -12,4 +12,6 @@
 
 void run_problem_c();
 
+void run_problem_d();
+
 #endif
