@@ -10,7 +10,9 @@ using namespace arma;
 
 int main(){
 
+
     run_problem_c();    // This function contains all the code for problem c).
+
 
     return 0;
 }

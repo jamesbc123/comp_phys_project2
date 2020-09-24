@@ -8,38 +8,94 @@ Created on Wed Sep 23 13:20:40 2020
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import re
+import os
 
-def load_timing_cpp():
+# Change the font size of all figures.
+plt.rcParams.update({'font.size': 22, 'figure.figsize': (10,10)})
+
+
+def plot_timing_table(directory):
+      """ Prints the table to latex and plots arma vs jacobi
+      """
+      toi = np.loadtxt(directory + "timing.txt", skiprows=1, delimiter=",")
+      toi = pd.DataFrame(toi, columns=["n","time used jacobi", "time used arma"])
+      toi = toi.groupby(["n"], as_index=False).mean()
       
-      toi = np.loadtxt("./cpp_codes/timing.txt", skiprows=1, delimiter=",")
-      toi = pd.DataFrame(toi, columns=["n","time"])
-      toi = toi.groupby(["n"]).mean()
-      print(toi.to_latex())
       
+      plt.plot(toi["n"], toi["time used arma"], label = "armadillo solver")
+      plt.plot(toi["n"], toi["time used jacobi"], label = "jacobi solver")
+      plt.legend()
+      plt.xlabel("n, dimensionality of matrix")
+      plt.ylabel("time used (seconds)")
+      plt.savefig(directory + "time_plot.png")
+      plt.close()
+      
+      toi1 = plot_iter_table(directory, False)
+      toi = pd.concat((toi, toi1['nbr of iterations']), axis=1)
+      
+      print(toi.to_latex(index=False))
       return
 
-def load_timing_py():
-      toi = pd.read_csv("./results/toi.csv")
+def plot_iter_table(directory, plot):
+      """ Prints the table to latex and plots the number of 
+      iterations and iterations divided by n.
+      """
+      toi = np.loadtxt(directory + "iterations.txt", skiprows=1, delimiter=",")
       
+      toi = pd.DataFrame(toi, columns=["n", "nbr of iterations"])
+      toi = toi.groupby(["n"], as_index=False).mean()
+      
+      if plot:
+            plt.plot(toi["n"], toi["nbr of iterations"])
+            plt.xlabel("n, dimensionality of matrix")
+            plt.ylabel("number of iterations")
+            plt.savefig(directory + "iterations.png")
+            plt.close()
+            
+            plt.plot(toi["n"], toi["nbr of iterations"]/toi["n"])
+            plt.xlabel("n, dimensionality of matrix")
+            plt.ylabel("iterations divided by n")
+            plt.savefig(directory + "iter_div_n.png")
+      plt.close()
+      
+      return toi
+      
+def plot_timing_table_py(directory):
+      """ Prints to latex the results from python class, 
+      i.e n, time used, and nbr of iterations.
+      """
+      toi = pd.read_csv(directory + "toi.csv")
       toi = pd.DataFrame(toi, columns=["n", "time", "iter"])
-      toi = toi.groupby(["n"]).mean()
-      print(toi)
-      print(toi.to_latex())
+      toi = toi.groupby(["n"], as_index=False).mean()
+      print(toi.to_latex(index=False))
       
       return
 
-def load_R_cpp():
-      n = 10
-      toi = np.loadtxt("./cpp_codes/eig_vec_10.txt")
-      print(toi.shape)
-      eig_vec = toi[0,:]
-      h = 1/10
-      x = np.arange(0,1,h)
-      print(x)
-      plt.plot(x, eig_vec)
-      plt.xlabel("x")
-      plt.ylabel("eigenvector value")
-      plt.savefig("./results/eig_vec_10.png")
+def plot_eig_vec(directory):
+      ''' Plots the first eigenvector for each n.
+      '''
+      for filename in os.listdir(directory):
+            if re.search('_([0-9]+)', filename):
+                  
+                  # Find n from the file name
+                  n = int(re.findall('_([0-9]+)', filename)[0])
+                  toi = np.loadtxt(os.path.join(directory,filename))
+                  eig_vec = toi[0,:]
+                  h = 1/n
+                  x = np.linspace(h,1,n)
+
+                  plt.plot(x, eig_vec, label = "n={}".format(n))
+                  plt.xlabel("\u03C1")
+                  plt.ylabel("first eigenvector")
+                  plt.legend()
+      plt.savefig("./results/first_eigvec.png")
+      plt.close()
       return
 
-load_R_cpp()
+directory = "./results/buckling_beam/"
+
+plot_eig_vec(directory)
+plot_timing_table(directory)
+toi = plot_iter_table(directory, plot=True)
+plot_timing_table_py(directory)
