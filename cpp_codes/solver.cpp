@@ -11,10 +11,7 @@ using namespace std;
 
 void Solver::init(int n, mat A, double tol){
     /* Initialise the member variables in the class */
-    cout << "int n (inside Solver::init): " << n << endl;
     m_n = n;
-    cout << "m_n (inside Solver::init): " << m_n << endl;
-
     m_A = A;
     m_R = zeros<mat>(n, n);
     m_R.diag().fill(1.0);
@@ -24,7 +21,7 @@ void Solver::init(int n, mat A, double tol){
     m_tol_reached = false;
 }
 
-void Solver::max_off_diag(){
+double Solver::max_off_diag(){
     /* Find the max element in A and change the 
     indices of p and k to those found. */
     double max = 0.0;
@@ -39,6 +36,7 @@ void Solver::max_off_diag(){
     if(max <= m_tol){
         m_tol_reached = true;
     }
+    return max;
 }
 
 void Solver::calc_tau(){
@@ -137,8 +135,10 @@ void Solver::write_to_file(string filename, string filename_R){
     m_ofile.close();
 }
 
+
 void Solver::sort_eigvec_and_eigval(){
-    /* Sort the eigenvaules by value and the eigenvectors by this ordering.
+    /*
+    // Sort the eigenvaules by value and the eigenvectors by this ordering.
 
     */
     
@@ -149,11 +149,11 @@ void Solver::sort_eigvec_and_eigval(){
     }
     
     vec eigval = m_A.diag();
-    cout << "The eigenvalues are" << eigval << endl;
+    //cout << "The eigenvalues are" << eigval << endl;
     uvec indices = sort_index(eigval, "ascend");
     sort (eigval.begin(), eigval.begin()+m_n);
-    cout << "the sorted eigvals are" << eigval << endl;
-    cout << "the indices are" << indices << endl;
-    mat m_R = m_R(indices,:);
-    cout << m_R << endl;
+    //cout << "the sorted eigvals are" << eigval << endl;
+    //cout << "the indices are" << indices << endl;
+    //mat m_R = m_R(indices,:);
+    //cout << m_R << endl;
 }

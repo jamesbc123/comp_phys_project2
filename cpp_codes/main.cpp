@@ -28,7 +28,7 @@ int main(){
     ofile.close();  // The file will be re-opened in the function write_to_file.
 
     ofile.open(filename_timing);
-    ofile << "n," << "time used by solver class (seconds)" << endl;
+    ofile << "n, " << "time used by solver class (seconds)" << endl;
     ofile.close();  
     
     clock_t start, end;
@@ -36,9 +36,9 @@ int main(){
 
     int power = 2;
     double tol = 1e-8;
-    int repeatition = 1;
+    int repetition = 1;
 
-    for(int j=0; j<repeatition; j++){
+    for(int j=0; j<repetition; j++){
         for(int i=1; i < power; i++){
             int n = pow(10, i);
             mat A = zeros<mat>(n, n);
@@ -47,7 +47,6 @@ int main(){
             A.diag(1).fill(-1);
             
             Solver my_solver;
-            cout << "n (before .init()): " << n << endl;
             my_solver.init(n, A, tol);
 
             // Run the algorithm and time it:
