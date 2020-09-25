@@ -18,13 +18,15 @@ using namespace arma;
 void run_problem_c(){
     ofstream ofile;
 
-    string filename = "../results/buckling_beam/iterations.txt"; // This file saves number of iterations for
+    string filename = "../results/buckling_beam/iterations.txt"; 
     string filename_timing = "../results/buckling_beam/timing.txt";
 
-    // different matrix sizes n. It is a .csv file.
-    const char * filename_c_str = filename.c_str(); // The "remove(...)" function below requires the input file name to be
+    // The "remove(...)" function below requires the input file name to be
     // of the type const char*.
-    cout << "remove(filename_c_str) = " << remove(filename_c_str) << endl;   // Remove the file if it already exists.
+    const char * filename_c_str = filename.c_str(); 
+
+    // Remove the file if it already exists.
+    cout << "remove(filename_c_str) = " << remove(filename_c_str) << endl;   
     
     // Do the same for the timing file.
     const char * filename_t_c_str = filename_timing.c_str();
@@ -33,8 +35,10 @@ void run_problem_c(){
     ofile.open(filename);
     // Choose the data column titles:
     ofile << "n, " << "number_of_transformations" << endl;
-    ofile.close();  // The file will be re-opened in the function write_to_file.
+    // The file will be re-opened in the function write_to_file.
+    ofile.close();  
 
+    // Do the same for the timing file.
     ofile.open(filename_timing);
     ofile << "n,time_used,time_used_arma" << endl;
     ofile.close();  
@@ -43,6 +47,9 @@ void run_problem_c(){
     double timeused;
     double timeused_arma;
 
+    // Initialise the dimensionality schedule, the number of repeats and
+    // the tolerance to be reached before terminating the jacobi 
+    // rotations. 
     double tol = 1e-8;
     int repetition = 1;
     int max_n = 150;
@@ -51,10 +58,13 @@ void run_problem_c(){
         for(int n=50; n< max_n; n+=50){
             double h = 1/n;
             double hh = h*h;
+            double d = 2/hh;
+            double a = -1/hh;
+
             mat A = zeros<mat>(n, n);
-            A.diag().fill(2/hh);
-            A.diag(-1).fill(-1/hh);
-            A.diag(1).fill(-1/hh);
+            A.diag().fill(d);
+            A.diag(-1).fill(a);
+            A.diag(1).fill(a);
             
             Solver my_solver;
             my_solver.init(n, A, tol);
@@ -86,15 +96,15 @@ void run_problem_c(){
             string filename_R = "../results/buckling_beam/eig_vec_"+ to_string(n) + ".txt";
             my_solver.write_to_file(filename, filename_R);  // Write 
 
-            string filename_analytic_eigvec = "../results/buckling_beam/analytic_eig_vec" + to_string(n) + ".txt";
-            string filename_analytic_eigval = "../results/buckling_beam/analytic_eig_val" + to_string(n) + ".txt";
+            // Create files for saving analytic eigenvalues and vectors to.
+            string filename_analytic_eigvec = "../results/buckling_beam/analytic_eig_vec" 
+                                              + to_string(n) + ".txt";
+            string filename_analytic_eigval = "../results/buckling_beam/analytic_eig_val" 
+                                              + to_string(n) + ".txt";
+
+            // Run analytic eigenvector solver. 
             my_solver.analytic_eigvec(filename_analytic_eigvec, filename_analytic_eigval);
-
-            
-
-
-        }
-    }
         }
     }
 }
+

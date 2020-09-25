@@ -154,7 +154,7 @@ void Solver::sort_eigvec_and_eigval(){
     m_R = sorted_R;
 }
 
-void Solver::analytic_eigvec(filename_eigvec, filename_eigval){
+void Solver::analytic_eigvec(string filename_eigvec, string filename_eigval){
     /* Calculate the analytic eigenvectors and write them to file.
     
     */
@@ -163,9 +163,9 @@ void Solver::analytic_eigvec(filename_eigvec, filename_eigval){
     double d = 2/hh;
     double a = -1/hh;
 
-    vec eigval = vec(m_n-1);
+    vec eigval_a = vec(m_n-1);
     for(int i=0; i<=m_n-2; i++){
-        eigval(i) = d + 2*a*cos((i+1)*M_PI / (double)m_n);
+        eigval_a(i) = d + 2*a*cos((i+1)*M_PI / (double)m_n);
     }
 
     // Analytical eigenvectors:
@@ -184,6 +184,6 @@ void Solver::analytic_eigvec(filename_eigvec, filename_eigval){
     m_ofile.close();
 
     m_ofile.open(filename_eigval);
-    m_ofile << eigval << endl;
+    m_ofile << eigval_a << endl;
     m_ofile.close();    
 }
