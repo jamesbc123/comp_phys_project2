@@ -31,5 +31,6 @@ public:
     void sort_eigvec_and_eigval();
     arma::mat get_R(){return m_R;} // Solver::run() should be ran first in order
     // to get the solution.
+    void analytic_eigvec(std::string filename_eigvec, std::string filename_eigval);
 };
 #endif

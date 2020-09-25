@@ -124,23 +124,32 @@ void Solver::write_to_file(string filename, string filename_R){
 
     cout << "m_n (inside write_to_file): " << m_n << endl;
     cout << "m_i (inside write_to_file): " << m_i << endl;
-
+    
+    // Append the data to the file.
     m_ofile.open(filename, ios::app);
-    m_ofile << "\n" << m_n << ", " << m_i << "\n";  // Append the data to the file.
+    m_ofile << m_n << "," << m_i <<endl;  
     m_ofile.close();
 
     m_ofile.open(filename_R);
     m_ofile << m_R << endl;
     m_ofile.close();
+
+
 }
 
-
 void Solver::sort_eigvec_and_eigval(){
-    /*
-    // Sort the eigenvaules by value and the eigenvectors by this ordering.
-
-    */
+    /* Sort the eigenvaules by value and the eigenvectors by this ordering. */
     vec eigval = m_A.diag();
+    
+    // Debugging start
+    /*
+    cout << "m_A.print(): (inside sort_eigvec_and_eigval())\n";
+    m_A.print();
+    cout << "eivgal.print(): (inside sort_eigvec_and_eigval())\n";
+    eigval.print(); // For debugging. All elements in eigval are NaN for some reason...
+    // Debugging end
+    */
+
     uvec indices = sort_index(eigval, "ascend");
     sort (eigval.begin(), eigval.begin()+m_n);
     mat sorted_R = zeros<mat>(m_n,m_n);
@@ -151,4 +160,38 @@ void Solver::sort_eigvec_and_eigval(){
 
     // Change m_R to the new sorted R.
     m_R = sorted_R;
+}
+
+void Solver::analytic_eigvec(string filename_eigvec, string filename_eigval){
+    /* Calculate the analytic eigenvectors and write them to file.
+    
+    */
+    double h = 1/double(m_n);
+    double hh = h*h;
+    double d = 2/hh;
+    double a = -1/hh;
+
+    vec eigval_a = vec(m_n-1);
+    for(int i=0; i<=m_n-2; i++){
+        eigval_a(i) = d + 2*a*cos((i+1)*M_PI / (double)m_n);
+    }
+
+    // Analytical eigenvectors:
+    mat u = mat(m_n-1, m_n-1);   
+    for(int i=0; i<=m_n-2; i++){
+        for(int j=0; j<=m_n-2; j++){
+            // Adding 1 to i and j because of C++'s 0-indexing (in order to match the analytical equation).
+            u(i,j) = sin((i+1)*(j+1)*M_PI / (double)m_n);  
+            
+        }
+    }
+
+    // Write eigenvalues and eigenvectors to file.
+    m_ofile.open(filename_eigvec);
+    m_ofile << u << endl;
+    m_ofile.close();
+
+    m_ofile.open(filename_eigval);
+    m_ofile << eigval_a << endl;
+    m_ofile.close();    
 }
