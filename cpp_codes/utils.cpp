@@ -49,10 +49,12 @@ void run_problem_c(){
 
     for(int j=0; j<repetition; j++){
         for(int n=50; n< max_n; n+=50){
+            double h = 1/n;
+            double hh = h*h;
             mat A = zeros<mat>(n, n);
-            A.diag().fill(2);
-            A.diag(-1).fill(-1);
-            A.diag(1).fill(-1);
+            A.diag().fill(2/hh);
+            A.diag(-1).fill(-1/hh);
+            A.diag(1).fill(-1/hh);
             
             Solver my_solver;
             my_solver.init(n, A, tol);
@@ -83,6 +85,14 @@ void run_problem_c(){
             my_solver.sort_eigvec_and_eigval();
             string filename_R = "../results/buckling_beam/eig_vec_"+ to_string(n) + ".txt";
             my_solver.write_to_file(filename, filename_R);  // Write 
+
+            string filename_analytic_eigvec = "../results/buckling_beam/analytic_eig_vec" + to_string(n) + ".txt";
+            string filename_analytic_eigval = "../results/buckling_beam/analytic_eig_val" + to_string(n) + ".txt";
+            my_solver.analytic_eigvec(filename_analytic_eigvec, filename_analytic_eigval);
+
+            
+
+
         }
     }
         }

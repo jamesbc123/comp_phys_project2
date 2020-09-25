@@ -133,6 +133,8 @@ void Solver::write_to_file(string filename, string filename_R){
     m_ofile.open(filename_R);
     m_ofile << m_R << endl;
     m_ofile.close();
+
+
 }
 
 void Solver::sort_eigvec_and_eigval(){
@@ -152,20 +154,36 @@ void Solver::sort_eigvec_and_eigval(){
     m_R = sorted_R;
 }
 
-void Solver::analytic_eigvec(){
+void Solver::analytic_eigvec(filename_eigvec, filename_eigval){
     /* Calculate the analytic eigenvectors and write them to file.
-
+    
     */
-    vec lambdaVec = vec(n-1);
-    for(int i=0; i<=n-2; i++){
-        lambdaVec(i) = d + 2*a*cos((i+1)*M_PI / (double)n);
+    double h = (1/m_n);
+    double hh = h*h;
+    double d = 2/hh;
+    double a = -1/hh;
+
+    vec eigval = vec(m_n-1);
+    for(int i=0; i<=m_n-2; i++){
+        eigval(i) = d + 2*a*cos((i+1)*M_PI / (double)m_n);
     }
 
     // Analytical eigenvectors:
-    mat u = mat(n-1, n-1);   
-    for(int i=0; i<=n-2; i++){
-        for(int j=0; j<=n-2; j++){
-            u(i,j) = sin((i+1)*(j+1)*M_PI / (double)n);  // Adding 1 to i and j because of C++'s 0-indexing (in order to match the analytical equation).
+    mat u = mat(m_n-1, m_n-1);   
+    for(int i=0; i<=m_n-2; i++){
+        for(int j=0; j<=m_n-2; j++){
+            // Adding 1 to i and j because of C++'s 0-indexing (in order to match the analytical equation).
+            u(i,j) = sin((i+1)*(j+1)*M_PI / (double)m_n);  
+            
         }
     }
+
+    // Write eigenvalues and eigenvectors to file.
+    m_ofile.open(filename_eigvec);
+    m_ofile << u << endl;
+    m_ofile.close();
+
+    m_ofile.open(filename_eigval);
+    m_ofile << eigval << endl;
+    m_ofile.close();    
 }
