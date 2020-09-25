@@ -47,12 +47,12 @@ void run_buckling_beam(){
     double timeused;
     double timeused_arma;
 
-    // Initialise the dimensionality schedule, the number of repeats and
-    // the tolerance to be reached before terminating the jacobi 
-    // rotations. 
+    // Initialise the dimensionality schedule, the number of 
+    // repeats(to get the average time) and the tolerance 
+    // to be reached before terminating the jacobi rotations. 
     double tol = 1e-8;
     int repetition = 1;
-    int max_n = 150;
+    int max_n = 400;
 
     for(int j=0; j<repetition; j++){
         for(int n=50; n< max_n; n+=50){
@@ -61,11 +61,11 @@ void run_buckling_beam(){
             double d = 2/hh;
             double a = -1/hh;
 
-            mat A = zeros<mat>(n, n);
+            mat A = zeros<mat>(n-1, n-1);
             A.diag().fill(d);
             A.diag(-1).fill(a);
             A.diag(1).fill(a);
-
+            
             Solver my_solver;
             my_solver.init(n, A, tol);
 
@@ -93,13 +93,14 @@ void run_buckling_beam(){
 
             // Sort the eigenvectors and eigenvalues from solver class.
             my_solver.sort_eigvec_and_eigval();
-            string filename_R = "../results/buckling_beam/eig_vec_"+ to_string(n) + ".txt";
-            my_solver.write_to_file(filename, filename_R);  // Write 
+            string filename_num_eigvec = "../results/buckling_beam/num_eigvec_"+ to_string(n) + ".txt";
+            string filename_num_eigval = "../results/buckling_beam/num_eigval_"+ to_string(n) + ".txt";
+            my_solver.write_to_file(filename, filename_num_eigvec, filename_num_eigval);  // Write 
 
             // Create files for saving analytic eigenvalues and vectors to.
-            string filename_analytic_eigvec = "../results/buckling_beam/analytic_eig_vec" 
+            string filename_analytic_eigvec = "../results/buckling_beam/analytic_eigvec_" 
                                               + to_string(n) + ".txt";
-            string filename_analytic_eigval = "../results/buckling_beam/analytic_eig_val" 
+            string filename_analytic_eigval = "../results/buckling_beam/analytic_eigval_" 
                                               + to_string(n) + ".txt";
 
             // Run analytic eigenvector solver. 

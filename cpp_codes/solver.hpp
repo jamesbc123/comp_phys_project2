@@ -17,7 +17,8 @@ private:
     int m_p;        // Second matrix index p
     double m_tau;   // tau = cot(2*theta)
     bool m_tol_reached;
-    int m_i;    
+    int m_i; 
+    arma::vec m_eigval;   
     std::ofstream m_ofile;
 
 public:
@@ -26,7 +27,7 @@ public:
     void calc_tau();
     void rotate();
     void run();
-    void write_to_file(std::string filename, std::string filename_R);
+    void write_to_file(std::string filename_iter, std::string filename_num_eigvec, std::string filename_num_eigval);
     void print_out();
     void sort_eigvec_and_eigval();
     void analytic_eigvec(std:: string filename_eigvec, std::string filename_eigval);
