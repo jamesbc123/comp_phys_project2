@@ -138,10 +138,18 @@ void Solver::write_to_file(string filename, string filename_R){
 }
 
 void Solver::sort_eigvec_and_eigval(){
-    /* Sort the eigenvaules by value and the eigenvectors by this ordering.
-
-    */
+    /* Sort the eigenvaules by value and the eigenvectors by this ordering. */
     vec eigval = m_A.diag();
+    
+    // Debugging start
+    /*
+    cout << "m_A.print(): (inside sort_eigvec_and_eigval())\n";
+    m_A.print();
+    cout << "eivgal.print(): (inside sort_eigvec_and_eigval())\n";
+    eigval.print(); // For debugging. All elements in eigval are NaN for some reason...
+    // Debugging end
+    */
+
     uvec indices = sort_index(eigval, "ascend");
     sort (eigval.begin(), eigval.begin()+m_n);
     mat sorted_R = zeros<mat>(m_n,m_n);
@@ -158,7 +166,7 @@ void Solver::analytic_eigvec(string filename_eigvec, string filename_eigval){
     /* Calculate the analytic eigenvectors and write them to file.
     
     */
-    double h = (1/m_n);
+    double h = 1/double(m_n);
     double hh = h*h;
     double d = 2/hh;
     double a = -1/hh;

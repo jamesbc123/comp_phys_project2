@@ -10,6 +10,6 @@
 
 // This file contains various functions, for running different parts of the project.
 
-void run_problem_c();
+void run_buckling_beam();
 
 #endif

@@ -15,7 +15,7 @@ using namespace arma;
 // This file contains various (large) functions for running different parts of
 // the project in order to prevent main.cpp from becoming messy. 
 
-void run_problem_c(){
+void run_buckling_beam(){
     ofstream ofile;
 
     string filename = "../results/buckling_beam/iterations.txt"; 
@@ -56,7 +56,7 @@ void run_problem_c(){
 
     for(int j=0; j<repetition; j++){
         for(int n=50; n< max_n; n+=50){
-            double h = 1/n;
+            double h = 1/double(n);
             double hh = h*h;
             double d = 2/hh;
             double a = -1/hh;
@@ -65,7 +65,7 @@ void run_problem_c(){
             A.diag().fill(d);
             A.diag(-1).fill(a);
             A.diag(1).fill(a);
-            
+
             Solver my_solver;
             my_solver.init(n, A, tol);
 
