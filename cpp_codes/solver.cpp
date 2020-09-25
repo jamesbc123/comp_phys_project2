@@ -8,14 +8,13 @@ using namespace arma;
 using namespace std;
 
 
-
 void Solver::init(int n, mat A, double tol){
     /* Initialise the member variables in the class */
     m_n = n;
     m_A = A;
     m_R = zeros<mat>(m_n-1, m_n-1);
     m_R.diag().fill(1.0);
-    
+    m_eigval;
     m_tol = tol;
     m_max_iter = (m_n-1)*(m_n-1)*(m_n-1);
     m_tol_reached = false;
@@ -95,32 +94,23 @@ void Solver::run(){
     for(m_i = 0; m_i < m_max_iter; m_i++){
             Solver::max_off_diag();
             if(m_tol_reached == true){
-                // Print some stuff using a class function.
-                Solver::print_out();
+                cout << "Tolerance limit reached; sufficiently good results obtained.\n";
                 return;
             }
             Solver::calc_tau();
             Solver::rotate();
+            
+            // Update m_eigval to contain the found eigenvalues:
+            m_eigval = m_A.diag();
     }
-    
-    // If we have reached here then we are at max iter. 
-    // Hence print some stuff using a class function.
-    // Or write to file.
-    Solver::print_out();
+
+    // If we have reached here then we are at max iter.
+    cout << "Maximum number of accepted iterations reached; aborting run.\n";
 }
 
-void Solver::print_out(){
-    // print to file the number of iterations or something.
-    if(m_i >= m_max_iter){
-        cout << "\nWarning: Maximum number of iterations of Solver::run() exceeded.\n\n";
-    }
-    else{
-        cout << "\nNumber of iterations (rotations) performed: " << m_i << endl << endl;
-    }
-}
-
+/*
 void Solver::write_to_file(string filename, string filename_R){
-    /* Write the information to file */
+    // Write the information to file.
     
     // Columns in the text file: n, number_of_transformations
     ofstream m_ofile;
@@ -134,9 +124,33 @@ void Solver::write_to_file(string filename, string filename_R){
     m_ofile << m_R << endl;
     m_ofile.close();
 }
+*/
+void Solver::write_to_file(string filename_iter, string filename_num_eigvec, string filename_num_eigval){
+    /* Write the information to file */
+    
+    // Columns in the text file: n, number_of_transformations
+    ofstream m_ofile;
+
+    cout << "m_n (inside write_to_file): " << m_n << endl;
+    cout << "m_i (inside write_to_file): " << m_i << endl;
+    
+    // Append the data to the file.
+    m_ofile.open(filename_iter, ios::app);
+    m_ofile << m_n << "," << m_i <<endl;  
+    m_ofile.close();
+
+    m_ofile.open(filename_num_eigvec);
+    m_ofile << m_R << endl;
+    m_ofile.close();
+
+    m_ofile.open(filename_num_eigval);
+    m_ofile << m_eigval << endl;
+    m_ofile.close();
+}
+
 
 void Solver::sort_eigvec_and_eigval(){
-    /* Sort the eigenvaules by value and the eigenvectors by this ordering. */
+    // Sort the eigenvaules by value and the eigenvectors by this ordering.
     vec eigval = m_A.diag();
 
     uvec indices = sort_index(eigval, "ascend");
@@ -150,6 +164,24 @@ void Solver::sort_eigvec_and_eigval(){
     // Change m_R to the new sorted R.
     m_R = sorted_R;
 }
+
+/*
+void Solver::sort_eigvec_and_eigval(){
+    // Sort the eigenvaules by value and the eigenvectors by this ordering.
+    m_eigval = m_A.diag();
+
+    uvec indices = sort_index(m_eigval, "ascend");
+    sort (m_eigval.begin(), m_eigval.begin()+m_n);
+    mat sorted_R = zeros<mat>(m_n,m_n);
+
+    for (int i=0; i<m_n; i++){
+        sorted_R.row(i) = m_R.row(indices(i));
+    }
+
+    // Change m_R to the new sorted R.
+    m_R = sorted_R;
+}
+*/
 
 void Solver::analytic_eigvec(string filename_eigvec, string filename_eigval){
     /* Calculate the analytic eigenvectors and write them to file.
