@@ -29,8 +29,8 @@ public:
     void write_to_file(std::string filename, std::string filename_R);
     void print_out();
     void sort_eigvec_and_eigval();
-    arma::mat get_R(){return m_R;} // Solver::run() should be ran first in order
-    // to get the solution.
+    arma::mat get_R();
+    arma::vec get_eigenvalues();
     void analytic_eigvec(std::string filename_eigvec, std::string filename_eigval);
 };
 #endif

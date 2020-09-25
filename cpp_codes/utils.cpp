@@ -52,16 +52,16 @@ void run_buckling_beam(){
     // rotations. 
     double tol = 1e-8;
     int repetition = 1;
-    int max_n = 150;
+    int max_n = 100;
 
     for(int j=0; j<repetition; j++){
-        for(int n=50; n< max_n; n+=50){
+        for(int n=50; n<=max_n; n+=50){
             double h = 1/double(n);
             double hh = h*h;
             double d = 2/hh;
             double a = -1/hh;
 
-            mat A = zeros<mat>(n, n);
+            mat A = zeros<mat>(n-1, n-1);
             A.diag().fill(d);
             A.diag(-1).fill(a);
             A.diag(1).fill(a);
@@ -76,7 +76,7 @@ void run_buckling_beam(){
             timeused = ((double)end-(double)start)/CLOCKS_PER_SEC;
 
             // Run armadillo solver and time it.
-            mat D = zeros<mat>(n, n);
+            mat D = zeros<mat>(n-1, n-1);
             D = diagmat(A);
             vec eigval;
             mat eigvec;
@@ -110,26 +110,27 @@ void run_buckling_beam(){
 
 
 void run_q_dots_one_electron(){
-    ofstream ofile;
+    // Choose some different values for rho_max to run the code for:
+    vec rhoMaxList = vec("100 1000 10000");
+    //vec nList = vec("10 20 30 40 50 60 80 100 125 150 175 200");
+    vec nList = vec("10 20");
+    nList.print("nList:");
+    rhoMaxList.print("rhoMaxList:");
     
-    string filename_N = "2d_eigenvalues_vs_N.txt";
+    ofstream ofile;
+    string filename_n = "2d_eigenvalues_vs_n.txt";
     string filename_rhoMax = "2d_eigenvalues_vs_rhoMax.txt";
 
-    // Choose some different values for rho_max to run the code for:
-    vec rhoMaxList = vec("100 1000 10000 100000");
-    vec NList = vec("10 20 30 40 50 60 80 100 125 150 175 200");
-    rhoMaxList.print();
-
     // Remove the files if they already exists:
-    const char * filename_N_c_str = filename_N.c_str(); // The "remove(...)" function below requires the input file name to be
+    const char * filename_n_c_str = filename_n.c_str(); // The "remove(...)" function below requires the input file name to be
     // of the type const char*.
-    cout << "remove(filename_N_c_str) = " << remove(filename_N_c_str) << endl; 
+    cout << "remove(filename_N_c_str) = " << remove(filename_n_c_str) << endl; 
 
     const char * filename_rhoMax_c_str = filename_rhoMax.c_str();
     cout << "remove(filename_rhoMax_c_str) = " << remove(filename_rhoMax_c_str) << endl;
 
-
-    ofile.open(filename_N);
+    // Create the text files to contain the results:
+    ofile.open(filename_n);
     // Choose the data column titles:
     ofile << "n, " << "eigenvalues" << endl;
     ofile.close();  // The file will be re-opened in the function write_to_file.
@@ -141,18 +142,41 @@ void run_q_dots_one_electron(){
     clock_t start, end;
     double timeused;
 
-    //int maxPower = 2;
     double tol = 1e-8;
-    int repetition = 1;
 
-    // Run algorithm as function of n.
-    for(int i=1; i <= maxPower; i++){
-        int n = pow(10, i);
+    // Run algorithm for different n.
+    // Choose a max value for rho (rho_max, approximation for rho=infinity):
+    double rho_max = 1000;
+    for (auto n : nList){ // For all chosen values of n.
         mat A = zeros<mat>(n, n);
-        A.diag().fill(2);
-        A.diag(-1).fill(-1);
-        A.diag(1).fill(-1);
+        // In the quantum case we must add the potential V(rho). It contains different
+        // values along the diagonal.
         
+        double h = 1/double(n);
+        double hh = h*h;
+        double d = 2/hh;
+        double a = -1/hh; // Same as buckling beam case.
+
+        double rho_0 = 0;
+        double rho_n = rho_max; // rho_n = rho_max
+        vec rhoList(n); // Position list of length n.
+
+        for (int i=0; i<=n-1; i++){rhoList(i) = rho_0 + i*h;} // Fill rhoList.
+
+        // Off-diagonal elements:
+        A.diag(-1).fill(a);
+        A.diag(1).fill(a);
+
+        double V_i;
+        double rho_i;
+        for (int i=0; i<=n-1; i++){ // Fill the diagonal elements of the matrix.
+        // In the quantum case, these elements vary because of the potential V_i.
+            V_i = rhoList(i)*rhoList(i); // V_i = rho_i^2
+            A(i,i) = d + V_i; // The diagonal elements (d_i in the project text).
+        }
+        // Now the matrix A represents the QM equation, and all that is needed is to 
+        // solve that system of equations.
+
         Solver my_solver;
         my_solver.init(n, A, tol);
 
@@ -161,6 +185,17 @@ void run_q_dots_one_electron(){
         my_solver.run();
         end = clock();
         timeused = ((double)end-(double)start)/CLOCKS_PER_SEC;
+
+        // Sort the eigenvalues in ascending order:
+        //my_solver.sort_eigvec_and_eigval();
+
+        // Print the eigenvalues:
+        vec eigenVals = my_solver.get_eigenvalues();
+        cout << "eigenVals.n_elem: " << eigenVals.n_elem;
+        eigenVals.print("\neigenVals:");
+        
+
+        /*
         cout <<scientific<< "time used" << timeused << endl;
         ofile.open(filename_timing, ios::app);
         ofile << "\n" << n << "," << timeused << endl;
@@ -169,6 +204,7 @@ void run_q_dots_one_electron(){
         my_solver.sort_eigvec_and_eigval();
         string filename_R = "eig_vec_"+ to_string(n) + ".txt";
         my_solver.write_to_file(filename, filename_R);  // Write 
+        */
     }
 
     // Run algorithm as function of rhoMax.
