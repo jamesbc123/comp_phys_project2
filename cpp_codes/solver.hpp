@@ -18,8 +18,9 @@ private:
     int m_p;        // Second matrix index p
     double m_tau;   // tau = cot(2*theta)
     bool m_tol_reached;
-    int m_i; 
-    arma::vec m_eigval;   
+    int m_i;
+    arma::vec m_eigval;
+    arma::vec m_sorted_eigval;
     std::ofstream m_ofile;
 
 public:
@@ -33,6 +34,8 @@ public:
     void analytic_eigvec(std:: string filename_eigvec, std::string filename_eigval);
     arma::mat get_R(); // Solver::run() should be ran first in order
     // to get the solution.
+    arma::mat get_sorted_R();
     arma::vec get_eigenvalues();
+    arma::vec get_sorted_eigenvalues();
 };
 #endif

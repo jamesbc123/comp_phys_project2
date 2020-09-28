@@ -112,10 +112,11 @@ void run_buckling_beam(){
 }
 
 void run_q_dots_one_electron(){
-    // Choose some different values for rho_max to run the code for:
-    vec rhoMaxList = vec("100 1000 10000");
+    // Choose some different values for n and rho_max to run the code for:
     //vec nList = vec("10 20 30 40 50 60 80 100 125 150 175 200");
-    vec nList = vec("10 20");
+    vec nList = vec("10 20 30 100");
+    vec rhoMaxList = vec("6");
+    
     nList.print("nList:");
     rhoMaxList.print("rhoMaxList:");
     
@@ -146,25 +147,31 @@ void run_q_dots_one_electron(){
 
     double tol = 1e-8;
 
-    // Run algorithm for different n.
+    // Run algorithm for different n:
+    cout << "Calculating eigenvalues for different values of n...\n";
     // Choose a max value for rho (rho_max, approximation for rho=infinity):
-    double rho_max = 1000;
+    double rho_max = 10;
+    double rho_0 = 0;
+    double rho_n = rho_max; // rho_n = rho_max
+    cout << "rho_max: " << rho_max << endl;
     for (auto n : nList){ // For all chosen values of n.
-        cout << endl;
-        mat A = zeros<mat>(n, n);
+        cout << "n: " << n << endl;
+        mat A = zeros<mat>(n-1, n-1);
         // In the quantum case we must add the potential V(rho). It contains different
         // values along the diagonal.
-        
-        double h = 1/double(n);
+
+        //double h = 1/double(n);
+        double h = (rho_n - rho_0)/double(n);
+        cout << "h = " << h << endl;
         double hh = h*h;
         double d = 2/hh;
         double a = -1/hh; // Same as buckling beam case.
 
-        double rho_0 = 0;
-        double rho_n = rho_max; // rho_n = rho_max
-        vec rhoList(n); // Position list of length n.
-
-        for (int i=0; i<=n-1; i++){rhoList(i) = rho_0 + i*h;} // Fill rhoList.
+        vec rhoList(n-1); // Position list of length n-1 (end points rho_0 and rho_n are
+        // excluded).
+        for (int i=0; i<=n-2; i++){rhoList(i) = rho_0 + (i+1)*h;} // Fill rhoList, and 
+        // exclude end points.
+        //rhoList.print("rhoList: ");
 
         // Off-diagonal elements:
         A.diag(-1).fill(a);
@@ -172,7 +179,7 @@ void run_q_dots_one_electron(){
 
         double V_i;
         double rho_i;
-        for (int i=0; i<=n-1; i++){ // Fill the diagonal elements of the matrix.
+        for (int i=0; i<=n-2; i++){ // Fill the diagonal elements of the matrix.
         // In the quantum case, these elements vary because of the potential V_i.
             V_i = rhoList(i)*rhoList(i); // V_i = rho_i^2
             A(i,i) = d + V_i; // The diagonal elements (d_i in the project text).
@@ -188,14 +195,14 @@ void run_q_dots_one_electron(){
         my_solver.run();
         end = clock();
         timeused = ((double)end-(double)start)/CLOCKS_PER_SEC;
-
         // Sort the eigenvalues in ascending order:
-        //my_solver.sort_eigvec_and_eigval();
+        my_solver.sort_eigvec_and_eigval();
 
         // Print the eigenvalues:
-        vec eigenVals = my_solver.get_eigenvalues();
+        vec eigenVals = my_solver.get_sorted_eigenvalues();
         cout << "eigenVals.n_elem: " << eigenVals.n_elem;
-        eigenVals.print("\neigenVals:");
+        eigenVals(span(0,8)).print("\neigenVals (first 9 elements):"); // Print the first 9 eigenvalues.
+        cout << "\t.\n\t.\n\t.\n\n";
         
         /*
         cout <<scientific<< "time used" << timeused << endl;
@@ -208,7 +215,76 @@ void run_q_dots_one_electron(){
         my_solver.write_to_file(filename, filename_R);  // Write 
         */
     }
+    cout << "Calculations of eigenvalues for different values of n complete.\n\n";
+
 
     // Run algorithm as function of rhoMax:
-    //for (auto rhoMax : rhoMaxList){ // For all chosen values of n.
+    cout << "Calculating eigenvalues for different values of rho_max...\n";
+    // Choose one value of n for all of these rho_max values:
+    int n = 400;
+    cout << "n: " << n << endl;
+    for (auto rhoMax : rhoMaxList){ // For all chosen values of rho_max.
+        cout << endl << "rhoMax: " << rhoMax << endl;
+        mat A = zeros<mat>(n-1, n-1);
+        // In the quantum case we must add the potential V(rho). It contains different
+        // values along the diagonal.
+
+        double rho_0 = 0;
+        double rho_n = rhoMax; // rho_n = rho_max
+
+        //double h = 1/double(n);
+        double h = (rho_n - rho_0)/double(n);
+        cout << "h = " << h << endl;
+        double hh = h*h;
+        double d = 2/hh;
+        double a = -1/hh; // Same as buckling beam case.
+        
+        vec rhoList(n-1); // Position list of length n-1 (end points rho_0 and rho_n are
+        // excluded).
+        for (int i=0; i<=n-2; i++){rhoList(i) = rho_0 + (i+1)*h;} // Fill rhoList, and 
+        // exclude end points.
+        //rhoList.print("rhoList: ");
+
+        // Off-diagonal elements:
+        A.diag(-1).fill(a);
+        A.diag(1).fill(a);
+        // Diagonal elements:
+        double V_i;
+        double rho_i;
+        for (int i=0; i<=n-2; i++){ // Fill the diagonal elements of the matrix.
+            V_i = rhoList(i)*rhoList(i); // V_i = rho_i^2.
+            A(i,i) = d + V_i; // The diagonal elements (d_i in the project text).
+        }
+
+        Solver my_solver;
+        my_solver.init(n, A, tol);
+
+        // Run the algorithm and time it:
+        start = clock();
+        my_solver.run();
+        end = clock();
+        timeused = ((double)end-(double)start)/CLOCKS_PER_SEC;
+        // Sort the eigenvalues in ascending order:
+        my_solver.sort_eigvec_and_eigval();
+
+        // Print the eigenvalues:
+        vec eigenVals = my_solver.get_sorted_eigenvalues();
+        cout << "eigenVals.n_elem: " << eigenVals.n_elem;
+        //eigenVals.print("\neigenVals:");
+        eigenVals(span(0,8)).print("\neigenVals (first 9 elements):"); // Print the first 9 eigenvalues.
+        //cout << ".\n.\n.\n\n";
+        cout << "\t.\n\t.\n\t.\n\n";
+        
+        /*
+        cout <<scientific<< "time used" << timeused << endl;
+        ofile.open(filename_timing, ios::app);
+        ofile << "\n" << n << "," << timeused << endl;
+        ofile.close();
+
+        my_solver.sort_eigvec_and_eigval();
+        string filename_R = "eig_vec_"+ to_string(n) + ".txt";
+        my_solver.write_to_file(filename, filename_R);  // Write 
+        */
+    }
+    cout << "Calculations of eigenvalues for different values of rho_max complete.\n";
 }

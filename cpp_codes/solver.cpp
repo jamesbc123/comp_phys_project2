@@ -135,9 +135,13 @@ void Solver::write_to_file(string filename_iter, string filename_num_eigvec, str
 
 void Solver::sort_eigvec_and_eigval(){
     // Sort the eigenvaules by value and the eigenvectors by this ordering.
+    /*
     vec eigval = m_A.diag();
     uvec indices = sort_index(eigval, "ascend");
     eigval = sort(eigval);
+    */
+    uvec indices = sort_index(m_eigval, "ascend");
+    m_sorted_eigval = sort(m_eigval);
 
     for (int i=0; i<m_n-1; i++){
         m_sorted_R.col(i) = m_R.col(indices(i));
@@ -178,8 +182,12 @@ void Solver::analytic_eigvec(string filename_eigvec, string filename_eigval){
     m_ofile.close();
 }
 
-arma::mat Solver::get_R(){return m_R;} // Solver::run() should be ran first. This
+mat Solver::get_R(){return m_R;} // Solver::run() should be ran first. This
 // returns the final rotation matrix.
 
-arma::vec Solver::get_eigenvalues(){return m_A.diag();} // Solver::run() should be ran first.
+mat Solver::get_sorted_R(){return m_sorted_R;}
+
+vec Solver::get_eigenvalues(){return m_eigval;} // Solver::run() should be ran first.
 // The diagonal elements are the eigenvalues.
+
+vec Solver::get_sorted_eigenvalues(){return m_sorted_eigval;}
