@@ -12,4 +12,6 @@
 
 void run_buckling_beam();
 
+void run_q_dots_one_electron();
+
 #endif

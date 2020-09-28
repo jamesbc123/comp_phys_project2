@@ -28,10 +28,10 @@ public:
     void rotate();
     void run();
     void write_to_file(std::string filename_iter, std::string filename_num_eigvec, std::string filename_num_eigval);
-    void print_out();
     void sort_eigvec_and_eigval();
     void analytic_eigvec(std:: string filename_eigvec, std::string filename_eigval);
-    arma::mat get_R(){return m_R;} // Solver::run() should be ran first in order
+    arma::mat get_R(); // Solver::run() should be ran first in order
     // to get the solution.
+    arma::vec get_eigenvalues();
 };
 #endif

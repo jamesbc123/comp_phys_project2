@@ -8,16 +8,15 @@ using namespace arma;
 using namespace std;
 
 
-
 void Solver::init(int n, mat A, double tol){
     /* Initialise the member variables in the class */
     m_n = n;
     m_A = A;
-    m_R = zeros<mat>(n, n);
+    m_R = zeros<mat>(m_n-1, m_n-1);
     m_R.diag().fill(1.0);
     m_eigval;
     m_tol = tol;
-    m_max_iter = n*n*n;
+    m_max_iter = (m_n-1)*(m_n-1)*(m_n-1);
     m_tol_reached = false;
     m_i = 0;
 }
@@ -26,8 +25,8 @@ double Solver::max_off_diag(){
     /* Find the max element in A and change the 
     indices of p and k to those found. */
     double max = 0.0;
-    for (int i = 0; i < m_n; ++i){
-        for (int j = i+1; j < m_n; ++j){
+    for (int i = 0; i < m_n-1; ++i){
+        for (int j = i+1; j < m_n-1; ++j){
             double aij = fabs(m_A(i,j));
             if ( aij > max){
                 max = aij; m_k = i; m_p = j;
@@ -71,7 +70,7 @@ void Solver::rotate(){
     m_A(m_p,m_p) = s*s*a_kk + 2.0*c*s*m_A(m_k,m_p) + c*c*a_pp;
     m_A(m_k,m_p) = 0.0; // Hard-coding non-diagonal elements by hand.
     m_A(m_p,m_k) = 0.0;
-    for(int i = 0; i < m_n; i++ ){
+    for(int i = 0; i < m_n-1; i++ ){
         if ( i != m_k && i != m_p ) {
             a_ik = m_A(i,m_k);
             a_ip = m_A(i,m_p);
@@ -90,31 +89,24 @@ void Solver::rotate(){
 }
 
 void Solver::run(){
-    for(m_i; m_i < m_max_iter; m_i++){
+    // This function has no output, but effectively it does since
+    // it changes m_A to the solved (diagonalized) version.
+    // And the rows of m_R contains the eigenvectors.
+    for(m_i = 0; m_i < m_max_iter; m_i++){
             Solver::max_off_diag();
             if(m_tol_reached == true){
-                // Print some stuff using a class function.
-                Solver::print_out();
+                cout << "Tolerance limit reached; sufficiently good results obtained.\n";
                 return;
             }
             Solver::calc_tau();
             Solver::rotate();
+            
+            // Update m_eigval to contain the found eigenvalues:
+            m_eigval = m_A.diag();
     }
-    
-    // If we have reached here then we are at max iter. 
-    // Hence print some stuff using a class function.
-    // Or write to file.
-    Solver::print_out();
-}
 
-void Solver::print_out(){
-    // print to file the number of iterations or something.
-    if(m_i >= m_max_iter){
-        cout << "\nWarning: Maximum number of iterations of Solver::run() exceeded.\n\n";
-    }
-    else{
-        cout << "\nNumber of iterations (rotations) performed: " << m_i << endl << endl;
-    }
+    // If we have reached here then we are at max iter.
+    cout << "Maximum number of accepted iterations reached; aborting run.\n";
 }
 
 void Solver::write_to_file(string filename_iter, string filename_num_eigvec, string filename_num_eigval){
@@ -141,23 +133,14 @@ void Solver::write_to_file(string filename_iter, string filename_num_eigvec, str
 }
 
 void Solver::sort_eigvec_and_eigval(){
-    /* Sort the eigenvaules by value and the eigenvectors by this ordering. */
-    m_eigval = m_A.diag();
-    
-    // Debugging start
-    /*
-    cout << "m_A.print(): (inside sort_eigvec_and_eigval())\n";
-    m_A.print();
-    cout << "eivgal.print(): (inside sort_eigvec_and_eigval())\n";
-    eigval.print(); // For debugging. All elements in eigval are NaN for some reason...
-    // Debugging end
-    */
+    // Sort the eigenvaules by value and the eigenvectors by this ordering.
+    vec eigval = m_A.diag();
 
-    uvec indices = sort_index(m_eigval, "ascend");
-    sort (m_eigval.begin(), m_eigval.begin()+m_n);
-    mat sorted_R = zeros<mat>(m_n,m_n);
+    uvec indices = sort_index(eigval, "ascend");
+    sort (eigval.begin(), eigval.begin()+m_n-1);
+    mat sorted_R = zeros<mat>(m_n-1,m_n-1);
 
-    for (int i=0; i<m_n; i++){
+    for (int i=0; i<m_n-1; i++){
         sorted_R.row(i) = m_R.row(indices(i));
     }
 
@@ -196,5 +179,11 @@ void Solver::analytic_eigvec(string filename_eigvec, string filename_eigval){
 
     m_ofile.open(filename_eigval);
     m_ofile << eigval_a << endl;
-    m_ofile.close();    
+    m_ofile.close();
 }
+
+arma::mat Solver::get_R(){return m_R;} // Solver::run() should be ran first. This
+// returns the final rotation matrix.
+
+arma::vec Solver::get_eigenvalues(){return m_A.diag();} // Solver::run() should be ran first.
+// The diagonal elements are the eigenvalues.
