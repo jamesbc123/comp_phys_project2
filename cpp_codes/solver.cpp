@@ -13,6 +13,7 @@ void Solver::init(int n, mat A, double tol){
     m_n = n;
     m_A = A;
     m_R = zeros<mat>(m_n-1, m_n-1);
+    m_sorted_R = zeros<mat>(m_n-1,m_n-1);
     m_R.diag().fill(1.0);
     m_eigval;
     m_tol = tol;
@@ -124,28 +125,23 @@ void Solver::write_to_file(string filename_iter, string filename_num_eigvec, str
     m_ofile.close();
 
     m_ofile.open(filename_num_eigvec);
-    m_ofile << m_R << endl;
+    m_ofile << m_sorted_R << endl;
     m_ofile.close();
 
     m_ofile.open(filename_num_eigval);
-    m_ofile << m_eigval << endl;
+    m_ofile << sort(Solver::get_eigenvalues()) << endl;
     m_ofile.close();
 }
 
 void Solver::sort_eigvec_and_eigval(){
     // Sort the eigenvaules by value and the eigenvectors by this ordering.
     vec eigval = m_A.diag();
-
     uvec indices = sort_index(eigval, "ascend");
-    sort (eigval.begin(), eigval.begin()+m_n-1);
-    mat sorted_R = zeros<mat>(m_n-1,m_n-1);
+    eigval = sort(eigval);
 
     for (int i=0; i<m_n-1; i++){
-        sorted_R.row(i) = m_R.row(indices(i));
+        m_sorted_R.row(i) = m_R.row(indices(i));
     }
-
-    // Change m_R to the new sorted R.
-    m_R = sorted_R;
 }
 
 void Solver::analytic_eigvec(string filename_eigvec, string filename_eigval){
