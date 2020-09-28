@@ -11,15 +11,16 @@ import pandas as pd
 from tqdm import tqdm
 
 tolerance = 1e-8
-pow = 3
+n_schedule = [50, 100, 150, 200, 250]
 
 toi = pd.DataFrame(columns=["n", "iter", "time"])
 
-for j in tqdm(range(0,6)):
-      for i in range(1, pow):
-            n = 10**i
-            a = 2*np.ones(n)
-            b = -1*np.ones(n-1)
+for j in range(0,1):
+      for n in tqdm(n_schedule):
+            h = 1/n
+            hh = h*h
+            a = 2/hh*np.ones(n)
+            b = -1/hh*np.ones(n-1)
             A = np.zeros((n, n))
             
             # Set the diagonal and off-diagonal elements. 
@@ -33,4 +34,4 @@ for j in tqdm(range(0,6)):
             temp = pd.DataFrame({"n": n, "iter": iterations, "time": time_elap}, index=[0])
             toi = toi.append(temp)
       
-toi.to_csv('./Results/toi.csv')
+toi.to_csv('./results/buckling_beam/toi.csv')
