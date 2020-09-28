@@ -85,8 +85,10 @@ def plot_eig_vec(directory):
                   toi = np.loadtxt(os.path.join(directory,filename))
                   eig_vec = toi[0,:]
                   
-                  h = 1/n
-                  x = np.linspace(h,1,n)
+                  rho_min = 0
+                  rho_max = 1
+                  h = (rho_max-rho_min)/n
+                  x = np.linspace(h,rho_max,n-1)
                   
                   dict['{}'.format(n)] = (x, eig_vec)
     
@@ -94,7 +96,7 @@ def plot_eig_vec(directory):
                   plt.xlabel("\u03C1")
                   plt.ylabel("first eigenvector")
                   plt.legend()
-      plt.savefig("./results/first_eigvec.png")
+      plt.savefig("./results/buckling_beam/first_eigvec.png")
       plt.close()
       
       dict = dict_nested['ana']
@@ -105,8 +107,10 @@ def plot_eig_vec(directory):
                   toi = np.loadtxt(os.path.join(directory,filename))
                   eig_vec = toi[:,0]
                   
-                  h = 1/n
-                  x = np.linspace(h,1,n)
+                  rho_min = 0
+                  rho_max = 1
+                  h = (rho_max-rho_min)/n
+                  x = np.linspace(h,rho_max,n-1)
                   
                   dict['{}'.format(n)] = (x, eig_vec)
                   
@@ -114,15 +118,20 @@ def plot_eig_vec(directory):
                   plt.xlabel("\u03C1")
                   plt.ylabel("first eigenvector")
                   plt.legend()
-      plt.savefig("./results/first_analytic_eigvec.png")
+      plt.savefig("./results/buckling_beam/first_analytic_eigvec.png")
       plt.close()
       
       x_ana, eigvec_ana = dict_nested['ana']['50']
       x_num, eigvec_num = dict_nested['num']['50']
-      plt.plot(x_ana, eigvec_ana)
-      plt.plot(x_num, eigvec_num)
+      plt.plot(x_ana, eigvec_ana, label= "analytic eigenvector")
+      plt.plot(x_num, eigvec_num, label="numerical eigenvector") 
+      plt.xlabel("\u03C1")
+      plt.ylabel("eigen vector for n = 50")
+      plt.legend(loc="upper right")
+      plt.savefig("./results/buckling_beam/num_ana.png")
       return
 
+      return
 directory = "./results/buckling_beam/"
 
 plot_eig_vec(directory)
