@@ -12,7 +12,7 @@ import re
 import os
 
 # Change the font size of all figures.
-plt.rcParams.update({'font.size': 22, 'figure.figsize': (10,10)})
+plt.rcParams.update({'font.size': 22, 'figure.figsize': (20,10)})
 
 
 def plot_timing_table(directory):
@@ -53,10 +53,10 @@ def plot_iter_table(directory, plot):
             plt.savefig(directory + "iterations.png")
             plt.close()
             
-            plt.plot(toi["n"], toi["nbr of iterations"]/toi["n"])
+            plt.plot(toi["n"], np.log10(toi["nbr of iterations"])/np.log10(toi["n"]))
             plt.xlabel("n, dimensionality of matrix")
-            plt.ylabel("iterations divided by n")
-            plt.savefig(directory + "iter_div_n.png")
+            plt.ylabel("log(iterations) base n")
+            plt.savefig(directory + "log_base_n.png")
       plt.close()
       
       return toi
@@ -83,7 +83,7 @@ def plot_eig_vec(directory):
                   # Find n from the file name
                   n = int(re.findall('([0-9]+)', filename)[0])
                   toi = np.loadtxt(os.path.join(directory,filename))
-                  eig_vec = toi[0,:]
+                  eig_vec = toi[:,0]
                   
                   rho_min = 0
                   rho_max = 1
@@ -123,12 +123,14 @@ def plot_eig_vec(directory):
       
       x_ana, eigvec_ana = dict_nested['ana']['50']
       x_num, eigvec_num = dict_nested['num']['50']
-      plt.plot(x_ana, eigvec_ana, label= "analytic eigenvector")
+      plt.plot(x_ana, eigvec_ana/2.24, label= "analytic eigenvector")
       plt.plot(x_num, eigvec_num, label="numerical eigenvector") 
       plt.xlabel("\u03C1")
       plt.ylabel("eigen vector for n = 50")
       plt.legend(loc="upper right")
+      plt.show()
       plt.savefig("./results/buckling_beam/num_ana.png")
+     
       return
 
       return
