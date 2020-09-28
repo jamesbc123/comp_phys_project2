@@ -140,7 +140,7 @@ void Solver::sort_eigvec_and_eigval(){
     eigval = sort(eigval);
 
     for (int i=0; i<m_n-1; i++){
-        m_sorted_R.row(i) = m_R.row(indices(i));
+        m_sorted_R.col(i) = m_R.col(indices(i));
     }
 }
 
