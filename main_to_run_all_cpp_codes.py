@@ -19,7 +19,7 @@ os.system("echo executing")
 os.system("./main.out")
 
 # Make directory for plotting if it doesn't exist.
-path = "./results"
+path = "./results/buckling_beam"
 if not os.path.exists(path):
       os.makedirs(path)
 
