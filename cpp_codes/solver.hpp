@@ -11,6 +11,7 @@ private:
     int m_n;        // Size of matrix A
     arma::mat m_A;  // Matrix A, the system we want to solve for the eigenvalues.
     arma::mat m_R;  // Rotation matrix
+    arma::mat m_sorted_R; // Sorted rotation matrix
     double m_tol;   // Tolerance of the sum of the off-diagonal elements
     int m_max_iter; // Maximum accepted number of iterations
     int m_k;        // First matrix index k
@@ -27,8 +28,8 @@ public:
     void calc_tau();
     void rotate();
     void run();
-    void write_to_file(std::string filename_iter, std::string filename_num_eigvec, std::string filename_num_eigval);
     void sort_eigvec_and_eigval();
+    void write_to_file(std::string filename_iter, std::string filename_num_eigvec, std::string filename_num_eigval);
     void analytic_eigvec(std:: string filename_eigvec, std::string filename_eigval);
     arma::mat get_R(); // Solver::run() should be ran first in order
     // to get the solution.

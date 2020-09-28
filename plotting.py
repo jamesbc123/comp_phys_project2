@@ -75,27 +75,74 @@ def plot_timing_table_py(directory):
 def plot_eig_vec(directory):
       ''' Plots the first eigenvector for each n.
       '''
+      dict_nested = {'num':{}, 'ana':{}}
+      
+      dict = dict_nested['num']
       for filename in os.listdir(directory):
-            if re.search('_([0-9]+)', filename):
-                  
+            if re.search('num_eigvec_[0-9]+', filename):
                   # Find n from the file name
-                  n = int(re.findall('_([0-9]+)', filename)[0])
+                  n = int(re.findall('([0-9]+)', filename)[0])
                   toi = np.loadtxt(os.path.join(directory,filename))
                   eig_vec = toi[0,:]
-                  h = 1/n
-                  x = np.linspace(h,1,n)
-
+                  
+                  rho_min = 0
+                  rho_max = 1
+                  h = (rho_max-rho_min)/n
+                  x = np.linspace(h,rho_max,n-1)
+                  
+                  dict['{}'.format(n)] = (x, eig_vec)
+    
                   plt.plot(x, eig_vec, label = "n={}".format(n))
                   plt.xlabel("\u03C1")
                   plt.ylabel("first eigenvector")
                   plt.legend()
-      plt.savefig("./results/first_eigvec.png")
+      plt.savefig("./results/buckling_beam/first_eigvec.png")
       plt.close()
+      
+      dict = dict_nested['ana']
+      for filename in os.listdir(directory):
+            if re.search('analytic_eigvec_[0-9]+', filename):
+                  # Find n from the file name
+                  n = int(re.findall('([0-9]+)', filename)[0])
+                  toi = np.loadtxt(os.path.join(directory,filename))
+                  eig_vec = toi[:,0]
+                  
+                  rho_min = 0
+                  rho_max = 1
+                  h = (rho_max-rho_min)/n
+                  x = np.linspace(h,rho_max,n-1)
+                  
+                  dict['{}'.format(n)] = (x, eig_vec)
+                  
+                  plt.plot(x, eig_vec, label = "n={}".format(n))
+                  plt.xlabel("\u03C1")
+                  plt.ylabel("first eigenvector")
+                  plt.legend()
+      plt.savefig("./results/buckling_beam/first_analytic_eigvec.png")
+      plt.close()
+      
+      x_ana, eigvec_ana = dict_nested['ana']['50']
+      x_num, eigvec_num = dict_nested['num']['50']
+      plt.plot(x_ana, eigvec_ana, label= "analytic eigenvector")
+      plt.plot(x_num, eigvec_num, label="numerical eigenvector") 
+      plt.xlabel("\u03C1")
+      plt.ylabel("eigen vector for n = 50")
+      plt.legend(loc="upper right")
+      plt.savefig("./results/buckling_beam/num_ana.png")
       return
 
+      return
 directory = "./results/buckling_beam/"
 
 plot_eig_vec(directory)
 plot_timing_table(directory)
 toi = plot_iter_table(directory, plot=True)
 plot_timing_table_py(directory)
+
+
+
+
+
+
+
+

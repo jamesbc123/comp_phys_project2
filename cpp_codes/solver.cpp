@@ -13,11 +13,13 @@ void Solver::init(int n, mat A, double tol){
     m_n = n;
     m_A = A;
     m_R = zeros<mat>(m_n-1, m_n-1);
+    m_sorted_R = zeros<mat>(m_n-1,m_n-1);
     m_R.diag().fill(1.0);
     m_eigval;
     m_tol = tol;
     m_max_iter = (m_n-1)*(m_n-1)*(m_n-1);
     m_tol_reached = false;
+    m_i = 0;
 }
 
 double Solver::max_off_diag(){
@@ -108,23 +110,6 @@ void Solver::run(){
     cout << "Maximum number of accepted iterations reached; aborting run.\n";
 }
 
-/*
-void Solver::write_to_file(string filename, string filename_R){
-    // Write the information to file.
-    
-    // Columns in the text file: n, number_of_transformations
-    ofstream m_ofile;
-    
-    // Append the data to the file.
-    m_ofile.open(filename, ios::app);
-    m_ofile << m_n << "," << m_i <<endl;  
-    m_ofile.close();
-
-    m_ofile.open(filename_R);
-    m_ofile << m_R << endl;
-    m_ofile.close();
-}
-*/
 void Solver::write_to_file(string filename_iter, string filename_num_eigvec, string filename_num_eigval){
     /* Write the information to file */
     
@@ -140,30 +125,24 @@ void Solver::write_to_file(string filename_iter, string filename_num_eigvec, str
     m_ofile.close();
 
     m_ofile.open(filename_num_eigvec);
-    m_ofile << m_R << endl;
+    m_ofile << m_sorted_R << endl;
     m_ofile.close();
 
     m_ofile.open(filename_num_eigval);
-    m_ofile << m_eigval << endl;
+    m_ofile << sort(Solver::get_eigenvalues()) << endl;
     m_ofile.close();
 }
 
 void Solver::sort_eigvec_and_eigval(){
     // Sort the eigenvaules by value and the eigenvectors by this ordering.
     vec eigval = m_A.diag();
-
     uvec indices = sort_index(eigval, "ascend");
-    sort (eigval.begin(), eigval.begin()+m_n-1);
-    mat sorted_R = zeros<mat>(m_n-1,m_n-1);
+    eigval = sort(eigval);
 
     for (int i=0; i<m_n-1; i++){
-        sorted_R.row(i) = m_R.row(indices(i));
+        m_sorted_R.row(i) = m_R.row(indices(i));
     }
-
-    // Change m_R to the new sorted R.
-    m_R = sorted_R;
 }
-
 
 void Solver::analytic_eigvec(string filename_eigvec, string filename_eigval){
     /* Calculate the analytic eigenvectors and write them to file.

@@ -49,7 +49,7 @@ void run_buckling_beam(){
     // to be reached before terminating the jacobi rotations. 
     double tol = 1e-8;
     int repetition = 1;
-    int max_n = 100;
+    int max_n = 150;
 
     for(int j=0; j<repetition; j++){
         for(int n=50; n<=max_n; n+=50){
@@ -91,8 +91,12 @@ void run_buckling_beam(){
 
             // Sort the eigenvectors and eigenvalues from solver class.
             my_solver.sort_eigvec_and_eigval();
-            string filename_num_eigvec = "../results/buckling_beam/num_eigvec_"+ to_string(n) + ".txt";
-            string filename_num_eigval = "../results/buckling_beam/num_eigval_"+ to_string(n) + ".txt";
+
+            // Create files for the numerical eigenvectors and eigenvalues.
+            string filename_num_eigvec = "../results/buckling_beam/num_eigvec_"
+                                         + to_string(n) + ".txt";
+            string filename_num_eigval = "../results/buckling_beam/num_eigval_"
+                                         + to_string(n) + ".txt";
             my_solver.write_to_file(filename, filename_num_eigvec, filename_num_eigval);  // Write            
 
             // Create files for saving analytic eigenvalues and vectors to.
