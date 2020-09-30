@@ -87,7 +87,7 @@ def plot_eig_vec(directory):
                   #extract the column vector and normalise them.
                   eig_vec = toi[:,0]
                   eig_vec = eig_vec / eig_vec.sum()
-                  print("The sum is ",eig_vec.sum())
+                  
                   rho_min = 0
                   rho_max = 1
                   h = (rho_max-rho_min)/n
@@ -99,7 +99,7 @@ def plot_eig_vec(directory):
                   plt.xlabel("\u03C1")
                   plt.ylabel("first eigenvector")
                   plt.legend()
-      plt.savefig("./results/buckling_beam/numerical_eigenvectors.png")
+      plt.savefig("../results/buckling_beam/numerical_eigenvectors.png")
       plt.close()
       
       dict = dict_nested['ana']
@@ -123,7 +123,7 @@ def plot_eig_vec(directory):
                   plt.xlabel("\u03C1")
                   plt.ylabel("first eigenvector")
                   plt.legend()
-      plt.savefig("./results/buckling_beam/analytic_eigvectors.png")
+      plt.savefig("../results/buckling_beam/analytic_eigvectors.png")
       plt.close()
       
       # Plots the first eigenvector for the analytic and numerical
@@ -137,11 +137,11 @@ def plot_eig_vec(directory):
       plt.ylabel("eigenvector for n = 50")
       plt.legend(loc="upper right")
       plt.show()
-      plt.savefig("./results/buckling_beam/numerical_vs_analytic.png")
+      plt.savefig("../results/buckling_beam/numerical_vs_analytic.png")
      
       return
 
-directory = "./results/buckling_beam/"
+directory = "../results/buckling_beam/"
 
 plot_eig_vec(directory)
 plot_timing_table(directory)
