@@ -16,7 +16,7 @@ plt.rcParams.update({'font.size': 22, 'figure.figsize': (20,10)})
 
 
 def plot_timing_table(directory):
-      """ Prints the table to latex and plots arma vs jacobi
+      """ Prints the table of times to latex and plots arma vs jacobi
       """
       toi = np.loadtxt(directory + "timing.txt", skiprows=1, delimiter=",")
       toi = pd.DataFrame(toi, columns=["n","time used jacobi", "time used arma"])
@@ -38,7 +38,7 @@ def plot_timing_table(directory):
       return
 
 def plot_iter_table(directory, plot):
-      """ Prints the table to latex and plots the number of 
+      """ Prints the table of iterations to latex and plots the number of 
       iterations and iterations divided by n.
       """
       toi = np.loadtxt(directory + "iterations.txt", skiprows=1, delimiter=",")
@@ -83,8 +83,11 @@ def plot_eig_vec(directory):
                   # Find n from the file name
                   n = int(re.findall('([0-9]+)', filename)[0])
                   toi = np.loadtxt(os.path.join(directory,filename))
-                  eig_vec = toi[:,0]
                   
+                  #extract the column vector and normalise them.
+                  eig_vec = toi[:,0]
+                  eig_vec = eig_vec / eig_vec.sum()
+                  print("The sum is ",eig_vec.sum())
                   rho_min = 0
                   rho_max = 1
                   h = (rho_max-rho_min)/n
@@ -96,7 +99,7 @@ def plot_eig_vec(directory):
                   plt.xlabel("\u03C1")
                   plt.ylabel("first eigenvector")
                   plt.legend()
-      plt.savefig("./results/buckling_beam/first_eigvec.png")
+      plt.savefig("./results/buckling_beam/numerical_eigenvectors.png")
       plt.close()
       
       dict = dict_nested['ana']
@@ -105,7 +108,9 @@ def plot_eig_vec(directory):
                   # Find n from the file name
                   n = int(re.findall('([0-9]+)', filename)[0])
                   toi = np.loadtxt(os.path.join(directory,filename))
+                  
                   eig_vec = toi[:,0]
+                  eig_vec = eig_vec / eig_vec.sum()
                   
                   rho_min = 0
                   rho_max = 1
@@ -118,22 +123,24 @@ def plot_eig_vec(directory):
                   plt.xlabel("\u03C1")
                   plt.ylabel("first eigenvector")
                   plt.legend()
-      plt.savefig("./results/buckling_beam/first_analytic_eigvec.png")
+      plt.savefig("./results/buckling_beam/analytic_eigvectors.png")
       plt.close()
+      
+      # Plots the first eigenvector for the analytic and numerical
+      # just for one n, for comparison.
       
       x_ana, eigvec_ana = dict_nested['ana']['50']
       x_num, eigvec_num = dict_nested['num']['50']
-      plt.plot(x_ana, eigvec_ana/2.24, label= "analytic eigenvector")
-      plt.plot(x_num, eigvec_num, label="numerical eigenvector") 
+      plt.plot(x_ana, eigvec_ana/eigvec_ana.sum(), label= "analytic eigenvector", marker = "v")
+      plt.plot(x_num, eigvec_num/eigvec_num.sum(), label="numerical eigenvector", marker ="^") 
       plt.xlabel("\u03C1")
-      plt.ylabel("eigen vector for n = 50")
+      plt.ylabel("eigenvector for n = 50")
       plt.legend(loc="upper right")
       plt.show()
-      plt.savefig("./results/buckling_beam/num_ana.png")
+      plt.savefig("./results/buckling_beam/numerical_vs_analytic.png")
      
       return
 
-      return
 directory = "./results/buckling_beam/"
 
 plot_eig_vec(directory)
