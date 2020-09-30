@@ -34,4 +34,4 @@ for j in range(0,1):
             temp = pd.DataFrame({"n": n, "iter": iterations, "time": time_elap}, index=[0])
             toi = toi.append(temp)
       
-toi.to_csv('./results/buckling_beam/toi.csv')
+toi.to_csv('../results/buckling_beam/toi.csv')
