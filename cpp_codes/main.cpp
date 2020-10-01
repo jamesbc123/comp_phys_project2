@@ -10,10 +10,11 @@ using namespace arma;
 
 int main(){
     
-    //run_buckling_beam(); // Run the code for problem 2c)
+    run_buckling_beam(); // Run the code for problem 2c)
 
     //run_q_dots_one_electron(); // Run the code for problem 2d)
-    run_q_dots_two_electrons(); // Run the code for problem 2e)
+    
+    //run_q_dots_two_electrons(); // Run the code for problem 2e)
 
     return 0;
 }
