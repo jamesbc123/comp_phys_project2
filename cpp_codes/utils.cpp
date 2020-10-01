@@ -50,10 +50,10 @@ void run_buckling_beam(){
     // to be reached before terminating the jacobi rotations. 
     double tol = 1e-8;
     int repetition = 1;
-    vec nList = vec("10 50 100 150 200 250 300");
+    int max_n = 150;
 
     for(int j=0; j<repetition; j++){
-        for(auto n : nList){
+        for(int n=50; n<=max_n; n+=50){
             cout << endl;
             double h = 1/double(n);
             double hh = h*h;
