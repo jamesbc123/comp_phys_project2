@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import re
 import os
 
-omegaList = [0.01, 0.5, 1, 5]
 # Read the comma-separated data files (two columns, x and y):
 directory = "../results/problem_2e/"
 data1 = np.loadtxt(directory + "2e_eigvecGS_omega0.01.txt", skiprows=1, delimiter=",")
@@ -34,23 +33,9 @@ plot3, = plt.plot(rhoList, eigVecGS3, label='omega_1')
 plot4, = plt.plot(rhoList, eigVecGS4, label='omega_5')
 
 #plt.legend([plot1, plot2, plot3, plot4], [r'$\rho_\text{max} = 0.01$', r'$\rho_\text{max} = 0.5$', r'$\rho_\text{max} = 1$', r'$\rho_\text{max} = 5$'])
-# Hvis du får 'iterable'-feil (merk kommaene): plt.legend([(plot1,), (plot2,)], ['Plot 1', 'Plot 2'])
 plt.grid()
 #plt.xlabel(r'$\rho_\text{max}$')
 #plt.ylabel(r'$\psi(\rho)$')
 plt.suptitle('Eigenvector of the ground state')
 plt.show()
 
-# Eller bare klipp og lim:
-"""
-plot1, = plt.plot(#fyll inn lister her)
-#plt.legend(plot1, )
-plt.legend()
-plt.grid()
-plt.xlabel(r'')   # r means 'render'?
-plt.ylabel(r'$$') # $$ for latex
-#plt.xlim(0,max(xliste)*1.05)  # Sets the limits for the x axis.
-#plt.ylim(0,max(yliste)*(1.05)) # Sets the limits for the y axis.
-plt.suptitle('')
-plt.show()
-"""
